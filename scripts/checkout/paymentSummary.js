@@ -8,7 +8,7 @@ export function renderPaymentSummary(){
     let shippingPriceCents = 0
 
     cart.forEach((cartItem) => {
-        const product = getProduct(cartItem.productId)
+       const product = getProduct(cartItem.productId)
        productPriceCents += product.priceCents * cartItem.quantity
 
       const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId)
@@ -19,7 +19,7 @@ export function renderPaymentSummary(){
     const taxCents = totalBeforeTaxCents * 0.10
     const totalCents = taxCents + totalBeforeTaxCents
 
-    console.log(totalCents);
+    console.log(`${formatCurrency(totalCents)}`);
 
     const paymentSummaryHTML = `
     <div class="payment-summary-title">
@@ -61,25 +61,60 @@ export function renderPaymentSummary(){
 
     const placeOrderButton = document.querySelector('.place-order-button')
     if (placeOrderButton) {
+      const cartIsEmpty = cart.length === 0
+      placeOrderButton.disabled = cartIsEmpty
+
+
       placeOrderButton.addEventListener('click', () => {
-        // Salva o pedido e redireciona
+        if (cartIsEmpty) return
+        
         saveOrder()
         window.location.href = 'orders.html'
       })
     }
 
-    // Função para salvar o pedido
     function saveOrder() {
-      // Recupera pedidos anteriores
+      if (cart.length === 0) return
+      
       const previousOrders = JSON.parse(localStorage.getItem('orders')) || []
-      // Adiciona o pedido atual
+
+      let productPriceCents = 0
+    let shippingPriceCents = 0
+
+    cart.forEach((cartItem) => {
+        const product = getProduct(cartItem.productId)
+       productPriceCents += product.priceCents * cartItem.quantity
+
+      const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId)
+      shippingPriceCents += deliveryOption.priceCents
+    });
+
+    const totalBeforeTaxCents = productPriceCents + shippingPriceCents
+    const taxCents = totalBeforeTaxCents * 0.10
+    const totalCents = taxCents + totalBeforeTaxCents
+
+    const cartCopy = JSON.parse(JSON.stringify(cart))
+    cartCopy.forEach((cartItem) => {
+      const deliveryOption = getDeliveryOption(cartItem.deliveryOptionId)
+      const deliveryDate = new Date()
+      deliveryDate.setDate(deliveryDate.getDate() + deliveryOption.deliveryDays)
+      cartItem.deliveryDate = deliveryDate.toISOString()
+    })
+
+      // previousOrders.push({
+      //   date: new Date().toISOString(),
+      //   cart: JSON.parse(JSON.stringify(cart)),
+      //   totalCents
+      // })
       previousOrders.push({
         date: new Date().toISOString(),
-        cart: JSON.parse(JSON.stringify(cart))
+        cart: cartCopy,
+        totalCents
       })
+
+      console.log(previousOrders);
+      
       localStorage.setItem('orders', JSON.stringify(previousOrders))
-      // Limpa o carrinho
       localStorage.removeItem('cart')
     }
 }
-

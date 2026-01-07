@@ -113,7 +113,6 @@ document.querySelector('.js-order-summary').innerHTML = cartSummaryHTML
 
 //Re-renderizando os eventos
 
-// Delete event
 document.querySelectorAll('.js-delete-link')
   .forEach((link) => {
     link.addEventListener('click', () => {
@@ -128,7 +127,6 @@ document.querySelectorAll('.js-delete-link')
     })
   })
 
-// Delivery option event
 document.querySelectorAll('.js-delivery-option')
   .forEach((element) => {
     element.addEventListener('click', () => {
@@ -139,7 +137,6 @@ document.querySelectorAll('.js-delivery-option')
     })
   })
 
-// Update quantity event
 document.querySelectorAll('.js-update-link')
   .forEach((button) => {
     button.addEventListener('click', () => {

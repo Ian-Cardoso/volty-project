@@ -1,6 +1,8 @@
-import { cart, addToCart } from '../data/cart.js'
+import { cart, addToCart, loadFromStorage } from '../data/cart.js'
 import { products } from '../data/products.js'
 import { formatCurrency } from './utils/money.js'
+
+loadFromStorage()
 
 let productsHTML = ''
 
@@ -150,7 +152,6 @@ searchInput.addEventListener('input', () => {
 
   document.querySelector('.js-products-grid').innerHTML = productsHTML
 
-  // Re-adiciona os eventos dos botões "Add to Cart" após filtrar
   document.querySelectorAll('.js-add-to-cart')
     .forEach((button) => {
       button.addEventListener('click', () => {
@@ -167,5 +168,3 @@ searchInput.addEventListener('input', () => {
       })
     })
 })
-
-

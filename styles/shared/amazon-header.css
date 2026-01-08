@@ -81,6 +81,10 @@
   border-bottom-right-radius: 0;
 }
 
+.search-bar:focus {
+  outline: none;
+}
+
 .search-button {
   background: rgb(37, 99, 235);
   color: white;

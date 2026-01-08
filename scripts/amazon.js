@@ -4,6 +4,8 @@ import { formatCurrency } from './utils/money.js'
 
 loadFromStorage()
 
+document.addEventListener('DOMContentLoaded', () => {
+
 let productsHTML = ''
 
 products.forEach((product) => {
@@ -95,12 +97,23 @@ const searchInput = document.querySelector('.search-bar')
 
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim().toLowerCase()
+
+  console.log('QUERY:', query)
+
   let filteredProducts = products
 
   if (query) {
-    filteredProducts = products.filter(product =>
-      product.name.toLowerCase().includes(query)
-    )
+    filteredProducts = products.filter(product => {
+      const nameMatch = product.name.toLowerCase().includes(query)
+
+      const keywordMatch = product.keywords?.some(keyword =>
+        keyword.toLowerCase().includes(query)
+      )
+
+      console.log('KEYWORDS:', product.keywords)
+
+      return nameMatch || keywordMatch
+    })
   }
 
   let productsHTML = ''
@@ -108,22 +121,24 @@ searchInput.addEventListener('input', () => {
     productsHTML += `
       <div class="product-container">
         <div class="product-image-container">
-          <img class="product-image"
-            src="${product.image}">
+          <img class="product-image" src="${product.image}">
         </div>
+
         <div class="product-name limit-text-to-2-lines">
           ${product.name}
         </div>
+
         <div class="product-rating-container">
-          <img class="product-rating-stars"
-            src="${product.getStarsUrl()}">
+          <img class="product-rating-stars" src="${product.getStarsUrl()}">
           <div class="product-rating-count link-primary">
             ${product.rating.count}
           </div>
         </div>
+
         <div class="product-price">
           ${product.getPrice()}
         </div>
+
         <div class="product-quantity-container js-quantity-selector">
           <select>
             <option selected value="1">1</option>
@@ -138,12 +153,11 @@ searchInput.addEventListener('input', () => {
             <option value="10">10</option>
           </select>
         </div>
+
         <div class="product-spacer"></div>
-        <div class="added-to-cart">
-          <img src="images/icons/checkmark.png">
-          Added
-        </div>
-        <button class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
+
+        <button class="add-to-cart-button button-primary js-add-to-cart"
+          data-product-id="${product.id}">
           Add to Cart
         </button>
       </div>
@@ -152,19 +166,19 @@ searchInput.addEventListener('input', () => {
 
   document.querySelector('.js-products-grid').innerHTML = productsHTML
 
-  document.querySelectorAll('.js-add-to-cart')
-    .forEach((button) => {
-      button.addEventListener('click', () => {
-        const productId = button.dataset.productId
-        const productContainer = button.closest('.product-container')
-        const quantitySelect = productContainer.querySelector('select')
-        const selectedQuantity = Number(quantitySelect.value)
+  document.querySelectorAll('.js-add-to-cart').forEach((button) => {
+    button.addEventListener('click', () => {
+      const productId = button.dataset.productId
+      const productContainer = button.closest('.product-container')
+      const quantitySelect = productContainer.querySelector('select')
+      const selectedQuantity = Number(quantitySelect.value)
 
-        for (let i = 0; i < selectedQuantity; i++) {
-          addToCart(productId)
-        }
+      for (let i = 0; i < selectedQuantity; i++) {
+        addToCart(productId)
+      }
 
-        updateCartQuantity()
-      })
+      updateCartQuantity()
     })
+  })
+})
 })

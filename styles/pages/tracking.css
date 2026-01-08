@@ -44,7 +44,7 @@
 }
 
 .current-status {
-  color: rgb(6, 125, 98);
+  color: #1e3a8a;
 }
 
 @media (max-width: 575px) {

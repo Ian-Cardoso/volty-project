@@ -58,6 +58,10 @@
   flex-shrink: 1;
 }
 
+.order-amazon-header-middle-section{
+  display: none;
+}
+
 @media (max-width: 575px) {
   .order-header {
     flex-direction: column;

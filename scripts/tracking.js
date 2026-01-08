@@ -1,5 +1,13 @@
 import { cart } from '../../data/cart.js'
 
+function formatDeliveryDate(date) {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
+}
+
 function getCartQuantity() {
   let cartQuantity = 0
   cart.forEach((cartItem) => {
@@ -79,14 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
       labels.forEach(l => l.classList.remove('current-status'))
       if (percent >= 100) {
         if (labels[2]) labels[2].classList.add('current-status')
-      } else if (percent >= 25) {
+      } else if (percent >= 50) {
         if (labels[1]) labels[1].classList.add('current-status')
       } else {
         if (labels[0]) labels[0].classList.add('current-status')
       }
     }
 
-    if (deliveryDateEl) deliveryDateEl.innerText = `Arriving on ${deliveryDate.toLocaleDateString()}`
+    if (deliveryDateEl) {
+  const deliveryDate = new Date(deliveryDateIso)
+  deliveryDateEl.innerText = `Arriving on ${formatDeliveryDate(deliveryDate)}`
+}
+    // if (deliveryDateEl) deliveryDateEl.innerText = `Arriving on ${deliveryDate.toLocaleDateString()}`
     if (cartQuantityElement) cartQuantityElement.innerHTML = getCartQuantity()
 
     return percent

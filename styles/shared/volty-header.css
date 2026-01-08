@@ -1,4 +1,4 @@
-.amazon-header {
+.volty-header {
   background-color: rgb(30, 41, 59);
   color: white;
   padding-left: 15px;
@@ -16,12 +16,12 @@
   z-index: 1000;
 }
 
-.amazon-header-left-section {
+.volty-header-left-section {
   width: 180px;
 }
 
 @media (max-width: 800px) {
-  .amazon-header-left-section {
+  .volty-header-left-section {
     width: unset;
   }
 }
@@ -39,28 +39,28 @@
   border: 1px solid white;
 }
 
-.amazon-logo {
+.volty-logo {
   width: 100px;
   margin-top: 5px;
 }
 
-.amazon-mobile-logo {
+.volty-mobile-logo {
   display: none;
 }
 
 @media (max-width: 575px) {
-  .amazon-logo {
+  .volty-logo {
     display: none;
   }
 
-  .amazon-mobile-logo {
+  .volty-mobile-logo {
     display: block;
     height: 35px;
     margin-top: 5px;
   }
 }
 
-.amazon-header-middle-section {
+.volty-header-middle-section {
   flex: 1;
   max-width: 850px;
   margin-left: 10px;
@@ -106,7 +106,7 @@
   margin-top: 3px;
 }
 
-.amazon-header-right-section {
+.volty-header-right-section {
   width: 180px;
   flex-shrink: 0;
   display: flex;

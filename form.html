@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/pages/forms.css">
+    <link rel="shortcut icon" href="/images/volty-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+
+    <title>Formulário de Registro</title>
+</head>
+<body>
+    <form class="register-form" id="registerForm">
+  <h2>Criar conta</h2>
+
+  <label>
+    Nome
+    <input type="text" id="name" required>
+  </label>
+
+  <label>
+    E-mail
+    <input type="email" id="email" required>
+  </label>
+
+ <label>
+  Senha
+  <div class="password-wrapper">
+    <input type="password" id="password" required>
+    <i class="fa-solid fa-eye" id="togglePassword"></i>
+  </div>
+</label>
+
+
+  <label>
+    Confirmar senha
+      <div class="password-wrapper">
+    <input type="password" id="confirmPassword" required>
+        <i class="fa-solid fa-eye" id="toggleConfirmPassword"></i>
+    </div>
+  </label>
+
+  <button type="submit">Cadastrar</button>
+
+  <p class="error" id="errorMsg"></p>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="module" src="data/forms.js"></script>
+
+</body>
+</html>

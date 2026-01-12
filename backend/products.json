@@ -11,7 +11,12 @@
     "keywords": [
       "socks",
       "sports",
-      "apparel"
+      "apparel",
+      "meia",
+      "meias",
+      "esportivas",
+      "esporte",
+      "vestuario"
     ]
   },
   {
@@ -24,8 +29,12 @@
     },
     "priceCents": 2095,
     "keywords": [
+      "esporte",
       "sports",
-      "basketballs"
+      "basketballs",
+      "esportivas",
+      "bola de basquete",
+      "basquete"
     ]
   },
   {
@@ -40,7 +49,12 @@
     "keywords": [
       "tshirts",
       "apparel",
-      "mens"
+      "mens",
+      "camisas",
+      "roupas",
+      "vestuario",
+      "camisetas"
+
     ],
     "type": "clothing",
     "sizeChartLink": "images/clothing-size-chart.png"
@@ -57,7 +71,12 @@
     "keywords": [
       "toaster",
       "kitchen",
-      "appliances"
+      "appliances",
+      "cozinha",
+      "eletrodomesticos",
+      "torradeira", 
+      "torradeiras"
+
     ]
   },
   {
@@ -72,7 +91,14 @@
     "keywords": [
       "plates",
       "kitchen",
-      "dining"
+      "dining",
+      "cozinha",
+      "pratos",
+      "jantar",
+      "mesa",
+      "conjunto de pratos",
+      "conjunto de jantar",
+      "jantar"
     ]
   },
   {
@@ -86,7 +112,12 @@
     "priceCents": 3499,
     "keywords": [
       "kitchen",
-      "cookware"
+      "cookware",
+      "baking",
+      "fornos",
+      "conjunto de assadeiras",
+      "cozinha"
+
     ]
   },
   {
@@ -101,7 +132,12 @@
     "keywords": [
       "hoodies",
       "sweaters",
-      "apparel"
+      "apparel",
+      "blusas",
+      "roupas",
+      "vestuario",
+      "moletom com capuz"
+
     ]
   },
   {
@@ -118,7 +154,12 @@
       "washroom",
       "restroom",
       "towels",
-      "bath towels"
+      "bath towels",
+      "toalhas",
+      "banheiro",
+      "toalhas de banho",
+      "toalhas de lavabo"
+
     ]
   },
   {
@@ -132,7 +173,13 @@
     "priceCents": 2899,
     "keywords": [
       "bathroom",
-      "cleaning"
+      "cleaning",
+      "laundry",
+      "detergent",
+      "sabao liquido",
+      "lavanderia",
+      "limpeza",
+      "banheiro"
     ]
   },
   {
@@ -147,7 +194,14 @@
     "keywords": [
       "shoes",
       "running shoes",
-      "footwear"
+      "footwear",
+      "womens",
+      "tenis",
+      "sapatos",
+      "calçados",
+      "feminino",
+      "corrida",
+      "atletico"
     ]
   },
   {
@@ -164,7 +218,13 @@
       "swimsuit",
       "swimming",
       "bathing",
-      "apparel"
+      "apparel",
+      "womens",
+      "roupao",
+      "roupas de banho",
+      "banho",
+      "nadar",
+      "vestuario"
     ],
     "type": "clothing",
     "sizeChartLink": "images/clothing-size-chart.png"
@@ -180,7 +240,12 @@
     "priceCents": 1560,
     "keywords": [
       "accessories",
-      "shades"
+      "shades",
+      "sunglasses",
+      "glasses",
+      "oculos de sol",
+      "acessorios",
+      "oculos"
     ]
   },
   {
@@ -197,7 +262,12 @@
       "sandals",
       "womens",
       "beach",
-      "summer"
+      "summer",
+      "sapatos",
+      "calçados",
+      "feminino",
+      "verao",
+      "praia"
     ]
   },
   {
@@ -212,7 +282,12 @@
     "keywords": [
       "bedroom",
       "curtains",
-      "home"
+      "home",
+      "quarto",
+      "cortinas",
+      "casa",
+      "cortinas blackout",
+      "quartos"
     ]
   },
   {
@@ -227,7 +302,12 @@
     "keywords": [
       "shorts",
       "apparel",
-      "mens"
+      "mens",
+      "bermuda",
+      "roupas",
+      "vestuario",
+      "verao",
+      "short"
     ]
   },
   {
@@ -242,7 +322,14 @@
     "keywords": [
       "water boiler",
       "appliances",
-      "kitchen"
+      "kitchen",
+      "chaleira eletrica",
+      "eletrodomesticos",
+      "cozinha",
+      "aquecedor de agua",
+      "agua quente",
+      "cha",
+      "agua"
     ]
   },
   {
@@ -259,7 +346,15 @@
       "tissues",
       "kitchen",
       "tissues box",
-      "napkins"
+      "napkins",
+      "guardanapos",
+      "cozinha",
+      "lenços de papel",
+      "caixa de lenços",
+      "papel toalha",
+      "toalhas de papel",
+      "papel higienico",
+      "higienico"
     ]
   },
   {
@@ -275,7 +370,15 @@
       "hats",
       "straw hats",
       "summer",
-      "apparel"
+      "apparel",
+      "womens",
+      "chapéu de palha",
+      "chapéus de palha",
+      "verao",
+      "acessorios",
+      "feminino",
+      "roupas",
+      "vestuario"
     ]
   },
   {
@@ -290,7 +393,11 @@
     "keywords": [
       "jewelry",
       "accessories",
-      "womens"
+      "womens",
+      "bijuterias",
+      "acessorios",
+      "feminino",
+      "prata"
     ]
   },
   {
@@ -307,7 +414,11 @@
       "hoodies",
       "sweaters",
       "womens",
-      "apparel"
+      "apparel",
+      "blusas",
+      "roupas",
+      "vestuario",
+      "moletom com capuz"
     ],
     "type": "clothing",
     "sizeChartLink": "images/clothing-size-chart.png"
@@ -324,7 +435,10 @@
     "keywords": [
       "bathmat",
       "bathroom",
-      "home"
+      "home",
+      "tapete de banheiro",
+      "banheiro",
+      "casa"
     ]
   },
   {
@@ -340,7 +454,11 @@
       "shoes",
       "flats",
       "womens",
-      "footwear"
+      "footwear",
+      "sapatos",
+      "calçados",
+      "feminino",
+      "sapatilhas"
     ]
   },
   {
@@ -356,7 +474,11 @@
       "tshirts",
       "shirts",
       "apparel",
-      "mens"
+      "mens",
+      "camisas",
+      "roupas",
+      "vestuario",
+      "camisetas"
     ],
     "type": "clothing",
     "sizeChartLink": "images/clothing-size-chart.png"
@@ -374,7 +496,11 @@
       "garbage",
       "bins",
       "cans",
-      "kitchen"
+      "kitchen",
+      "lixeira",
+      "cozinha",
+      "lixeiras",
+      "lata de lixo"
     ]
   },
   {
@@ -391,7 +517,11 @@
       "bed sheets",
       "sheets",
       "covers",
-      "home"
+      "home",
+      "quarto",
+      "lençóis",
+      "casa",
+      "cobertores"
     ]
   },
   {
@@ -409,7 +539,12 @@
       "beanies",
       "tuques",
       "apparel",
-      "womens"
+      "womens",
+      "inverno",
+      "acessorios",
+      "feminino",
+      "roupas",
+      "vestuario"
     ]
   },
   {
@@ -424,7 +559,13 @@
     "keywords": [
       "pants",
       "apparel",
-      "mens"
+      "mens",
+      "calças",
+      "roupas",
+      "vestuario",
+      "chino",
+      "homem",
+      "masculino"
     ]
   },
   {
@@ -440,7 +581,13 @@
       "shoes",
       "running shoes",
       "footwear",
-      "mens"
+      "mens",
+      "sapatos",
+      "calçados",
+      "masculino",
+      "corrida",
+      "atletico",
+      "homem"
     ]
   },
   {
@@ -456,7 +603,12 @@
       "sunglasses",
       "glasses",
       "accessories",
-      "shades"
+      "shades",
+      "oculos de sol",
+      "acessorios",
+      "masculino",
+      "oculos",
+      "homem"
     ]
   },
   {
@@ -470,7 +622,13 @@
     "priceCents": 6797,
     "keywords": [
       "cooking set",
-      "kitchen"
+      "kitchen",
+      "cookware",
+      "utensils",
+      "conjunto de cozinha",
+      "cozinha",
+      "utensilios de cozinha",
+      "panelas e frigideiras"
     ]
   },
   {
@@ -486,7 +644,11 @@
       "bathroom",
       "washroom",
       "mirrors",
-      "home"
+      "home",
+      "banheiro",
+      "espelhos",
+      "casa",
+      "restroom"
     ]
   },
   {
@@ -503,7 +665,13 @@
       "sweatpants",
       "jogging",
       "apparel",
-      "womens"
+      "womens",
+      "calças",
+      "roupas",
+      "vestuario",
+      "feminino",
+      "jogging",
+      "moletom"
     ]
   },
   {
@@ -517,7 +685,13 @@
     "priceCents": 2400,
     "keywords": [
       "accessories",
-      "womens"
+      "womens",
+      "acessorios",
+      "feminino",
+      "bijuterias",
+      "jewelry",
+      "brincos",
+      "earrings"
     ]
   },
   {
@@ -532,7 +706,12 @@
     "keywords": [
       "boxes",
       "food containers",
-      "kitchen"
+      "kitchen",
+      "storage",
+      "recipientes para alimentos",
+      "cozinha",
+      "armazenamento",
+      "caixas"
     ]
   },
   {
@@ -547,7 +726,12 @@
     "keywords": [
       "coffeemakers",
       "kitchen",
-      "appliances"
+      "appliances",
+      "cafeteira",
+      "cozinha",
+      "eletrodomesticos",
+      "vidro",
+      "jarra de vidro"
     ]
   },
   {
@@ -561,7 +745,13 @@
     "priceCents": 3099,
     "keywords": [
       "bedroom",
-      "home"
+      "home",
+      "curtains",
+      "quarto",
+      "cortinas",
+      "casa",
+      "cortinas blackout",
+      "quartos"
     ]
   },
   {
@@ -576,7 +766,10 @@
     "keywords": [
       "bathroom",
       "home",
-      "towels"
+      "towels",
+      "toalhas de banho",
+      "banheiro",
+      "casa"
     ]
   },
   {
@@ -592,7 +785,13 @@
       "shoes",
       "running shoes",
       "footwear",
-      "womens"
+      "womens",
+      "tenis",
+      "sapatos",
+      "calçados",
+      "feminino",
+      "corrida",
+      "atletico"
     ]
   },
   {
@@ -607,7 +806,11 @@
     "keywords": [
       "food blenders",
       "kitchen",
-      "appliances"
+      "appliances",
+      "liquidificador",
+      "cozinha",
+      "eletrodomesticos"
+
     ]
   },
   {
@@ -623,7 +826,11 @@
       "mixing bowls",
       "baking",
       "cookware",
-      "kitchen"
+      "kitchen",
+      "tigelas de mistura",
+      "cozinha",
+      "panelas",  
+      "assar"
     ]
   },
   {
@@ -638,7 +845,11 @@
     "keywords": [
       "kitchen",
       "kitchen towels",
-      "tissues"
+      "tissues",
+      "papel toalha",
+      "cozinha",
+      "toalhas de cozinha",
+      "guardanapos"
     ]
   },
   {
@@ -654,7 +865,11 @@
       "sweaters",
       "hoodies",
       "apparel",
-      "mens"
+      "mens",
+      "blusas",
+      "roupas",
+      "vestuario",
+      "moletom com capuz"
     ]
   }
 ]

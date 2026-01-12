@@ -10,9 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
+    <link rel="shortcut icon" href="images/volty-logo.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles/shared/general.css">
     <link rel="stylesheet" href="styles/shared/volty-header.css">
     <link rel="stylesheet" href="styles/pages/volty.css">
+    <link rel="stylesheet" href="./styles/pages/chat-ai.css">
+
   </head>
   <body>
 
@@ -53,6 +56,37 @@
         
       </div>
     </div>
+
+        <div class="chat-fab" id="chatFab">
+  🤖
+</div>
+
+<div class="chat-wrapper hidden" id="chatWrapper">
+  <div class="chat-container">
+    <div class="chat-header">
+      <strong>Volty AI 🤖</strong>
+      <span>Recomendações inteligentes</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="bot-message">
+        Olá! Me diga o que você procura 😊  
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input
+        type="text"
+        id="chatInput"
+        placeholder="Digite o que você procura..."
+      />
+      <button id="sendMessage">Enviar</button>
+    </div>
+  </div>
+</div>
+
+    <script type="module" src="./data/chat-ai.js"></script>
+    <script src="./data/chat-toogle.js"></script>
     <script type="module" src="./scripts/volty.js"></script>
   </body>
   

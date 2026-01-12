@@ -1,0 +1,73 @@
+*{
+  box-sizing: border-box;
+}
+
+.register-form {
+  max-width: 380px;
+  margin: 60px auto;
+  background: #fff;
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+}
+
+.register-form h2 {
+  margin-bottom: 20px;
+}
+
+.register-form label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 12px 0px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.register-form button {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.error {
+  margin-top: 12px;
+  color: #dc2626;
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+}
+
+.password-wrapper i {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #777;
+}
+
+.password-wrapper i:hover {
+  color: #2563eb; 
+}
+
+.fa-solid.fa-eye {
+  font-size: 16px;
+  text-align: center;
+}

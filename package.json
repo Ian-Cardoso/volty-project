@@ -1,0 +1,19 @@
+{
+  "name": "javascript-amazon-project",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "backend/server.js",
+  "scripts": {
+    "dev": "node backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "pg": "^8.16.3"
+  }
+}

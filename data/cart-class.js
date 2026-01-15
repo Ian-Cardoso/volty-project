@@ -74,7 +74,6 @@ class Cart {
       
         this.saveToStorage()
       }
-
 }
 
 const cart = new Cart('cart-oop')

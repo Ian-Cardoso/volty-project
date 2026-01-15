@@ -80,11 +80,11 @@ function handleSendMessage() {
     const recommendations = recommendProducts(message)
 
     if (recommendations.length === 0) {
-      addMessage('Não encontrei produtos com esse perfil')
+      addMessage("Didn't find any products matching your request. Please try different keywords.")
       return
     }
 
-    addMessage('Com base no que você disse, recomendo:')
+    addMessage('So here are some products you might like: ')
     renderProducts(recommendations)
   }, 600)
 }

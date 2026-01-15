@@ -2,6 +2,15 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import pkg from 'pg'
 import cors from 'cors'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Carregar produtos
+const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8'))
 
 const { Pool } = pkg
 const app = express()
@@ -38,18 +47,6 @@ app.get('/', (req, res) => {
   res.send('API is running')
 })
 
-
-// app.get('/me/:id', async (req, res) => {
-//   const { id } = req.params
-
-//   const result = await pool.query(
-//     'SELECT name, email, cep, street, city, state FROM users WHERE id=$1',
-//     [id]
-//   )
-
-//   res.json(result.rows[0])
-// })
-
 app.get('/me/:id', async (req, res) => {
   const { id } = req.params
 
@@ -59,12 +56,11 @@ app.get('/me/:id', async (req, res) => {
   )
 
   if (!result.rows.length) {
-    return res.status(404).json({ error: 'Usuário não encontrado' })
+    return res.status(404).json({ error: 'User not found' })
   }
 
   res.json(result.rows[0])
 })
-
 
 app.put('/me/:id', async (req, res) => {
   const { id } = req.params
@@ -105,16 +101,77 @@ app.post('/login', async (req, res) => {
   )
 
   if (!result.rows.length)
-    return res.status(401).json({ error: 'Usuário não encontrado' })
+    return res.status(401).json({ error: 'User not found' })
 
   const valid = await bcrypt.compare(password, result.rows[0].password)
 
   if (!valid)
-    return res.status(401).json({ error: 'Senha inválida' })
+    return res.status(401).json({ error: 'Invalid password' })
 
   res.json({ userId: result.rows[0].id })
 })
 
+//orders route
+
+app.post('/orders', async (req, res) => {
+  const { userId, cart } = req.body
+
+  try {
+    // Se carrinho vazio ou inválido
+    if (!cart || !Array.isArray(cart) || cart.length === 0) {
+      return res.status(400).json({ error: 'Empty cart' })
+    }
+
+    // Calcular total corretamente
+    const totalCents = cart.reduce((sum, item) => {
+      const product = productsData.find(p => p.id === item.productId)
+      if (!product) return sum
+      return sum + (product.priceCents * item.quantity)
+    }, 0)
+    const total = (totalCents / 100).toFixed(2)
+
+    // Inserir pedido
+    const order = await pool.query(
+      'INSERT INTO orders (user_id, total) VALUES ($1, $2) RETURNING id',
+      [userId, parseFloat(total)]
+    )
+
+    const orderId = order.rows[0].id
+
+    // Inserir itens do pedido
+    for (const item of cart) {
+      const product = productsData.find(p => p.id === item.productId)
+      
+      if (!product) continue
+      
+      const productPrice = (product.priceCents / 100).toFixed(2)
+      
+      // console.log(`Inserindo item: productId=${item.productId}, name=${product.name}, price=${productPrice}, qty=${item.quantity}`)
+
+      await pool.query(
+        `INSERT INTO order_items (order_id, product_id, name, price, quantity)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [orderId, item.productId, product.name, parseFloat(productPrice), item.quantity]
+      )
+    }
+
+    res.status(201).json({ orderId, total })
+  } catch (err) {
+    console.error('Error creating order:', err)
+    res.status(500).json({ error: 'Error creating order', details: err.message })
+  }
+})
+
+app.get('/orders/:userId', async (req, res) => {
+  const { userId } = req.params
+
+  const orders = await pool.query(
+    'SELECT * FROM orders WHERE user_id=$1 ORDER BY created_at DESC',
+    [userId]
+  )
+
+  res.json(orders.rows)
+})
 
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000')

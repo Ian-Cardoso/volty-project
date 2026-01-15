@@ -1,7 +1,28 @@
-import { cart } from '../../data/cart.js'
+import { cart, clearCart } from '../../data/cart.js'
 import { getProduct } from '../../data/products.js'
 import { getDeliveryOption } from '../../data/deliveryOption.js'
 import { formatCurrency } from '../utils/money.js'
+
+// Função para enviar pedido ao servidor
+async function sendOrderToServer(orderData) {
+  try {
+    const userId = localStorage.getItem('userId') || 'guest'
+    
+    const response = await fetch('http://localhost:3000/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, cart: orderData })
+    })
+    
+    if (!response.ok) {
+      throw new Error('Erro ao enviar pedido')
+    }
+    
+    console.log('Pedido enviado com sucesso!')
+  } catch (error) {
+    console.error('Erro ao enviar pedido:', error)
+  }
+}
 
 export function renderPaymentSummary(){
     let productPriceCents = 0
@@ -65,15 +86,15 @@ export function renderPaymentSummary(){
       placeOrderButton.disabled = cartIsEmpty
 
 
-      placeOrderButton.addEventListener('click', () => {
+      placeOrderButton.addEventListener('click', async () => {
         if (cartIsEmpty) return
         
-        saveOrder()
+        await saveOrder()
         window.location.href = 'orders.html'
       })
     }
 
-    function saveOrder() {
+    async function saveOrder() {
       if (cart.length === 0) return
       
       const previousOrders = JSON.parse(localStorage.getItem('orders')) || []
@@ -106,6 +127,7 @@ export function renderPaymentSummary(){
       //   cart: JSON.parse(JSON.stringify(cart)),
       //   totalCents
       // })
+
       previousOrders.push({
         date: new Date().toISOString(),
         cart: cartCopy,
@@ -115,6 +137,11 @@ export function renderPaymentSummary(){
       console.log(previousOrders);
       
       localStorage.setItem('orders', JSON.stringify(previousOrders))
-      localStorage.removeItem('cart')
+      
+      // Enviar pedido ao servidor
+      await sendOrderToServer(cartCopy)
+      
+      // Limpar o carrinho
+      clearCart()
     }
 }

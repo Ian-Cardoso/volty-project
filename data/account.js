@@ -1,4 +1,4 @@
-
+import Swal from 'sweetalert2'
 
 const userId = localStorage.getItem('userId')
 
@@ -61,7 +61,11 @@ changePassword.onclick = () => {
   })
   .then(res => res.json())
   .then(() => {
-    alert('Senha alterada')
+   Swal.fire({
+  title: "Password Updated",
+  text: "Password updated",
+  icon: "success"
+})
     newPassword.value = ''
   })
 }

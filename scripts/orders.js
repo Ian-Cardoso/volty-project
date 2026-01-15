@@ -65,7 +65,7 @@ function renderOrders() {
         </div>
       </div>
     `
-
+    
       console.log(`${formatCurrency(order.totalCents)}`);
   })
 

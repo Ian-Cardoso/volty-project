@@ -70,3 +70,8 @@ export function updateCartItemQuantity(productId, newQuantity) {
   })
   saveToStorage()
 }
+
+export function clearCart() {
+  cart = []
+  localStorage.removeItem('cart')
+}

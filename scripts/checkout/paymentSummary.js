@@ -2,6 +2,7 @@ import { cart, clearCart } from '../../data/cart.js'
 import { getProduct } from '../../data/products.js'
 import { getDeliveryOption } from '../../data/deliveryOption.js'
 import { formatCurrency } from '../utils/money.js'
+import { validateCoupon } from '../../data/coupons.js'
 
 // Função para enviar pedido ao servidor
 async function sendOrderToServer(orderData) {
@@ -27,6 +28,7 @@ async function sendOrderToServer(orderData) {
 export function renderPaymentSummary(){
     let productPriceCents = 0
     let shippingPriceCents = 0
+    let discountAmount = 0
 
     cart.forEach((cartItem) => {
        const product = getProduct(cartItem.productId)
@@ -67,9 +69,22 @@ export function renderPaymentSummary(){
             <div class="payment-summary-money">$${formatCurrency(taxCents)}</div>
           </div>
 
+          <div class="coupon-section">
+            <label>Coupon Code (Optional)</label>
+            <div class="coupon-input-group">
+              <input type="text" id="couponInput" placeholder="Enter coupon code" maxlength="50">
+              <button id="applyCouponBtn" class="apply-coupon-btn">Apply</button>
+            </div>
+            <div id="couponMessage"></div>
+            <div id="discountRow" class="payment-summary-row" style="display: none;">
+              <div>Discount:</div>
+              <div class="payment-summary-money" id="discountAmount">-$0.00</div>
+            </div>
+          </div>
+
           <div class="payment-summary-row total-row">
             <div>Order total:</div>
-            <div class="payment-summary-money">$${formatCurrency(totalCents)}</div>
+            <div class="payment-summary-money" id="finalTotal">$${formatCurrency(totalCents)}</div>
           </div>
 
           <button class="place-order-button button-primary">
@@ -80,11 +95,61 @@ export function renderPaymentSummary(){
     document.querySelector('.js-payment-summary')
         .innerHTML = paymentSummaryHTML
 
+    // Variável global para rastrear desconto
+    let appliedCoupon = null
+    let currentDiscount = 0
+
+    const applyCouponBtn = document.getElementById('applyCouponBtn')
+    const couponInput = document.getElementById('couponInput')
+    const couponMessage = document.getElementById('couponMessage')
+    const discountRow = document.getElementById('discountRow')
+    const discountAmountEl = document.getElementById('discountAmount')
+    const finalTotalEl = document.getElementById('finalTotal')
+
+    applyCouponBtn.addEventListener('click', async () => {
+      const code = couponInput.value.trim()
+      
+      if (!code) {
+        couponMessage.textContent = 'Please enter a coupon code'
+        couponMessage.style.color = '#d32f2f'
+        return
+      }
+
+      const totalInReais = (totalBeforeTaxCents + taxCents) / 100
+
+      const result = await validateCoupon(code, totalInReais)
+
+      if (!result.success) {
+        couponMessage.textContent = result.error
+        couponMessage.style.color = '#d32f2f'
+        discountRow.style.display = 'none'
+        currentDiscount = 0
+      } else {
+        appliedCoupon = result.coupon
+        currentDiscount = result.coupon.discountAmount
+        couponMessage.textContent = `✓ Coupon applied! Saving $${currentDiscount.toFixed(2)}`
+        couponMessage.style.color = '#4caf50'
+        
+        discountAmountEl.textContent = `-$${currentDiscount.toFixed(2)}`
+        discountRow.style.display = 'flex'
+
+        const finalTotal = totalCents / 100 - currentDiscount
+        finalTotalEl.textContent = `$${finalTotal.toFixed(2)}`
+      }
+
+      // Salvar cupom aplicado no localStorage
+      if (appliedCoupon) {
+        localStorage.setItem('appliedCoupon', JSON.stringify({
+          code: appliedCoupon.code,
+          discountAmount: currentDiscount
+        }))
+      }
+    })
+
     const placeOrderButton = document.querySelector('.place-order-button')
     if (placeOrderButton) {
       const cartIsEmpty = cart.length === 0
       placeOrderButton.disabled = cartIsEmpty
-
 
       placeOrderButton.addEventListener('click', async () => {
         if (cartIsEmpty) return

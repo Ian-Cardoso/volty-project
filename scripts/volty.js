@@ -1,10 +1,11 @@
 import { cart, addToCart, loadFromStorage } from '../data/cart.js'
 import { products } from '../data/products.js'
 import { formatCurrency } from './utils/money.js'
+import { addToWishlist, removeFromWishlist, isInWishlist } from '../data/wishlist.js'
 
 loadFromStorage()
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
 let productsHTML = ''
 
@@ -14,10 +15,13 @@ products.forEach((product) => {
           <div class="product-image-container">
             <img class="product-image"
               src="${product.image}">
+            <button class="wishlist-btn js-wishlist-btn" data-product-id="${product.id}" title="Add to wishlist">
+              ♡
+            </button>
           </div>
 
           <div class="product-name limit-text-to-2-lines">
-            ${product.name}
+            <a href="product.html?id=${product.id}" class="product-name-link">${product.name}</a>
           </div>
 
           <div class="product-rating-container">
@@ -63,7 +67,35 @@ products.forEach((product) => {
 
 document.querySelector('.js-products-grid').innerHTML = productsHTML
 
-updateCartQuantity()
+  // Carregar estado da wishlist
+  const wishlistBtns = document.querySelectorAll('.js-wishlist-btn')
+  for (let btn of wishlistBtns) {
+    const productId = btn.dataset.productId
+    const inWishlist = await isInWishlist(productId)
+    if (inWishlist) {
+      btn.classList.add('in-wishlist')
+      btn.textContent = '♥'
+    }
+  }
+
+  // Adicionar event listeners para wishlist
+  wishlistBtns.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault()
+      const productId = btn.dataset.productId
+      const isActive = btn.classList.contains('in-wishlist')
+
+      if (isActive) {
+        await removeFromWishlist(productId)
+        btn.classList.remove('in-wishlist')
+        btn.textContent = '♡'
+      } else {
+        await addToWishlist(productId)
+        btn.classList.add('in-wishlist')
+        btn.textContent = '♥'
+      }
+    })
+  })
 
 function updateCartQuantity () {
   let cartQuantity = 0

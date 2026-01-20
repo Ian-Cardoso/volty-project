@@ -1,4 +1,4 @@
-import Swal from 'sweetalert2'
+
 
 const userId = localStorage.getItem('userId')
 

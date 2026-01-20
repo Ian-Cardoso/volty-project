@@ -24,19 +24,12 @@ input, select, button {
    background: transparent;
   border: 1px solid #1E3A8A;
   color: #1E3A8A;
-
-  /* color: white;
-  background-color: rgb(8, 37, 85); 
-  border: 1px solid rgb(8, 25, 85); */
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
 }
 
 .button-primary:hover {
-  /* background-color: rgb(1, 13, 31);
-  border: 1px solid rgb(236, 231, 226); */
-
    background: #1E3A8A;
   color: #fff;
 }

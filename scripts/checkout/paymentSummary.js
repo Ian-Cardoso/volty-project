@@ -5,14 +5,19 @@ import { formatCurrency } from '../utils/money.js'
 import { validateCoupon } from '../../data/coupons.js'
 
 // Função para enviar pedido ao servidor
-async function sendOrderToServer(orderData) {
+async function sendOrderToServer(orderData, couponCode = null, discountAmount = 0) {
   try {
     const userId = localStorage.getItem('userId') || 'guest'
     
     const response = await fetch('http://localhost:3000/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, cart: orderData })
+      body: JSON.stringify({ 
+        userId, 
+        cart: orderData,
+        couponCode,
+        discountAmount 
+      })
     })
     
     if (!response.ok) {
@@ -95,7 +100,7 @@ export function renderPaymentSummary(){
     document.querySelector('.js-payment-summary')
         .innerHTML = paymentSummaryHTML
 
-    // Variável global para rastrear desconto
+    // Variável para rastrear desconto
     let appliedCoupon = null
     let currentDiscount = 0
 
@@ -177,7 +182,19 @@ export function renderPaymentSummary(){
 
     const totalBeforeTaxCents = productPriceCents + shippingPriceCents
     const taxCents = totalBeforeTaxCents * 0.10
-    const totalCents = taxCents + totalBeforeTaxCents
+    let totalCents = taxCents + totalBeforeTaxCents
+
+    // Aplicar desconto do cupom se existir
+    const appliedCouponData = localStorage.getItem('appliedCoupon')
+    let discountCents = 0
+    let couponCode = null
+    
+    if (appliedCouponData) {
+      const coupon = JSON.parse(appliedCouponData)
+      discountCents = Math.round(coupon.discountAmount * 100)
+      couponCode = coupon.code
+      totalCents -= discountCents
+    }
 
     const cartCopy = JSON.parse(JSON.stringify(cart))
     cartCopy.forEach((cartItem) => {
@@ -187,26 +204,24 @@ export function renderPaymentSummary(){
       cartItem.deliveryDate = deliveryDate.toISOString()
     })
 
-      // previousOrders.push({
-      //   date: new Date().toISOString(),
-      //   cart: JSON.parse(JSON.stringify(cart)),
-      //   totalCents
-      // })
-
       previousOrders.push({
         date: new Date().toISOString(),
         cart: cartCopy,
-        totalCents
+        totalCents,
+        discountCents,
+        couponCode,
+        subtotal: totalBeforeTaxCents + taxCents
       })
 
       console.log(previousOrders);
       
       localStorage.setItem('orders', JSON.stringify(previousOrders))
       
-      // Enviar pedido ao servidor
-      await sendOrderToServer(cartCopy)
+      // Enviar pedido ao servidor com informações do cupom
+      await sendOrderToServer(cartCopy, couponCode, discountCents)
       
-      // Limpar o carrinho
+      // Limpar o carrinho e o cupom
       clearCart()
+      localStorage.removeItem('appliedCoupon')
     }
 }

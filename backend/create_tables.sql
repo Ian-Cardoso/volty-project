@@ -1,7 +1,3 @@
--- ========================================
--- TABELAS ADICIONAIS - WISHLIST, REVIEWS, CUPONS
--- ========================================
-
 -- 1. TABELA WISHLIST (Lista de Desejos)
 -- Permite usuários salvar produtos para depois
 -- CREATE TABLE IF NOT EXISTS wishlist (

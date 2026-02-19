@@ -5,6 +5,10 @@ import cors from 'cors'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
+import { UserSchema } from './scripts/validators/userValidator.js'
+
+dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -19,22 +23,25 @@ app.use(cors())
 app.use(express.json())
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'volty',
-  password: '1504',
-  port: 5432
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 })
 
 app.post('/register', async (req, res) => {
   const { name, email, password } = req.body
 
   try {
-    const hash = await bcrypt.hash(password, 10)
+
+    const validatedData = UserSchema.parse(req.body)
+
+    const hash = await bcrypt.hash(validatedData.password, 10)
 
     await pool.query(
       'INSERT INTO users (name, email, password) VALUES ($1,$2,$3)',
-      [name, email, hash]
+      [validatedData.name, validatedData.email, hash]
     )
 
     res.status(201).json({ message: 'User created' })

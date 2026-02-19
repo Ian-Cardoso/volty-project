@@ -5,6 +5,20 @@ import { addToWishlist, removeFromWishlist, isInWishlist } from '../data/wishlis
 
 loadFromStorage()
 
+function updateCartQuantity () {
+  let cartQuantity = 0
+            
+  cart.forEach((cartItem) => {
+    cartQuantity += cartItem.quantity
+  })
+
+  document.querySelector('.js-cart-quantity')
+  .innerHTML = cartQuantity
+}
+
+// Atualizar quantidade do carrinho quando a página carrega
+updateCartQuantity()
+
 document.addEventListener('DOMContentLoaded', async () => {
 
 let productsHTML = ''
@@ -96,18 +110,6 @@ document.querySelector('.js-products-grid').innerHTML = productsHTML
       }
     })
   })
-
-function updateCartQuantity () {
-  let cartQuantity = 0
-            
-  cart.forEach((cartItem) => {
-    cartQuantity += cartItem.quantity
-  })
-
-  document.querySelector('.js-cart-quantity')
-  .innerHTML = cartQuantity
-
-}
 
 document.querySelectorAll('.js-add-to-cart')
   .forEach((button) => {

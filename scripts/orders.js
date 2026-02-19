@@ -51,8 +51,12 @@ function renderOrders() {
               <div>${new Date(order.date).toLocaleDateString()}</div>
             </div>
             <div class="order-total">
-              <div class="order-header-label">Total $${formatCurrency(order.totalCents || 0)}</div>
-              <div>See details</div>
+              <div class="order-header-label">Total</div>
+              <div>
+                ${order.couponCode ? `<span style="text-decoration: line-through; color: #999;">$${formatCurrency(order.subtotal || order.totalCents)}</span> ` : ''}
+                <span style="font-weight: bold; color: #167a45;">$${formatCurrency(order.totalCents)}</span>
+                ${order.couponCode ? `<span style="color: #4caf50; font-size: 12px;"> (Coupon: ${order.couponCode})</span>` : ''}
+              </div>
             </div>
           </div>
           <div class="order-header-right-section">

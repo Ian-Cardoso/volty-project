@@ -51,9 +51,6 @@ cart.forEach((cartItem) => {
                       `).join('')}
                     </select>
                   </span>
-                  <span class="update-quantity-link link-primary js-update-link" data-product-id="${matchingProduct.id}">
-                    Update
-                  </span>
                   <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${matchingProduct.id}">
                     Delete
                   </span>
@@ -137,6 +134,22 @@ document.querySelectorAll('.js-delivery-option')
     })
   })
 
+// whenever a quantity dropdown changes, automatically persist and re-render
+function attachQuantityChangeHandlers() {
+  document.querySelectorAll('.js-quantity-select')
+    .forEach((select) => {
+      select.addEventListener('change', () => {
+        const productId = select.dataset.productId
+        const newQuantity = Number(select.value)
+        updateCartItemQuantity(productId, newQuantity)
+        renderOrderSummary()
+        renderPaymentSummary()
+        updateCheckoutItems()
+      })
+    })
+}
+
+// the 'Update' link remains for accessibility but is no longer required
 document.querySelectorAll('.js-update-link')
   .forEach((button) => {
     button.addEventListener('click', () => {
@@ -149,4 +162,7 @@ document.querySelectorAll('.js-update-link')
       updateCheckoutItems()
     })
   })
+
+// call change handler attachment after initial render
+attachQuantityChangeHandlers()
 }

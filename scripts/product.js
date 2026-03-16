@@ -8,7 +8,7 @@ const productId = urlParams.get('id')
 
 if (!productId) {
   alert('Product not found')
-  window.location.href = 'volty.html'
+  window.location.href = 'html/\volty.html'
 }
 
 let currentProduct = null
@@ -25,7 +25,7 @@ async function loadProduct() {
 
   if (!currentProduct) {
     alert('Product not found')
-    window.location.href = 'volty.html'
+    window.location.href = 'html/\volty.html'
     return
   }
 
@@ -96,7 +96,7 @@ async function handleSubmitReview() {
 
   if (!userId) {
     alert('Please login to leave a review')
-    window.location.href = 'login.html'
+    window.location.href = 'html/\login.html'
     return
   }
 

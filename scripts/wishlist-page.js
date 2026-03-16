@@ -7,7 +7,7 @@ const userId = localStorage.getItem('userId')
 
 if (!userId) {
   alert('Please login to view your wishlist')
-  window.location.href = 'login.html'
+  window.location.href = 'html/\login.html'
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -98,3 +98,4 @@ function updateCartQuantity() {
     element.textContent = quantity
   }
 }
+

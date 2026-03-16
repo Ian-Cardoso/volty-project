@@ -14,3 +14,4 @@ export function updateCheckoutItems() {
     link.innerHTML = getCartQuantity()
   }
 }
+

@@ -103,7 +103,7 @@
   },
   {
     "id": "8c9c52b5-5a19-4bcb-a5d1-158a74287c53",
-    "image": "images/products/6-piece-non-stick-baking-set.webp",
+    "image": "images/products/6-piece-non-stick-baking-set-removebg-preview.png",
     "name": "6-Piece Nonstick, Carbon Steel Oven Bakeware Baking Set",
     "rating": {
       "stars": 4.5,
@@ -122,7 +122,7 @@
   },
   {
     "id": "dd82ca78-a18b-4e2a-9250-31e67412f98d",
-    "image": "images/products/plain-hooded-fleece-sweatshirt-yellow.jpg",
+    "image": "images/products/6-piece-non-stick-baking-set-removebg-preview.png",
     "name": "Plain Hooded Fleece Sweatshirt",
     "rating": {
       "stars": 4.5,
@@ -159,7 +159,6 @@
       "banheiro",
       "toalhas de banho",
       "toalhas de lavabo"
-
     ]
   },
   {
@@ -190,7 +189,7 @@
       "stars": 4,
       "count": 89
     },
-    "priceCents": 3390,
+    "priceCents": 3390,     
     "keywords": [
       "shoes",
       "running shoes",

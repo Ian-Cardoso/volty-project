@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1a1a1a;
+            border-radius: 6px;
+            border: 1px solid #2a2a2a;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            color: #fff;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #aaa;
+        }
+
+        .test-button {
+            background: #2a2a2a;
+            color: #e0e0e0;
+            border: 1px solid #3a3a3a;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .test-button:hover:not(:disabled) {
+            background: #3a3a3a;
+            border-color: #4a4a4a;
+        }
+
+        .test-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .output {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 12px;
+            max-height: 350px;
+            overflow-y: auto;
+            font-size: 11px;
+            font-family: 'Menlo', 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .log-item {
+            margin: 3px 0;
+            padding: 2px 6px;
+        }
+
+        .log-success {
+            color: #4ade80;
+        }
+
+        .log-error {
+            color: #f87171;
+        }
+
+        .log-info {
+            color: #60a5fa;
+        }
+
+        .log-warning {
+            color: #fbbf24;
+        }
+
+        .log-test {
+            color: #a78bfa;
+            font-weight: bold;
+        }
+
+        .token-display {
+            background: #0f0f0f;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #2a2a2a;
+            margin-top: 6px;
+            word-break: break-all;
+            font-size: 10px;
+            color: #aaa;
+            font-family: 'Menlo', 'Courier New', monospace;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3a3a3a;
+            background: #1a1a1a;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .clear-btn {
+            background: #2a2a2a;
+        }
+
+        .clear-btn:hover {
+            background: #3a3a3a;
+        }
+
+        .status {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 11px;
+            display: none;
+        }
+
+        .status.running {
+            background: #1e3a8a;
+            color: #60a5fa;
+            display: block;
+        }
+
+        .status.success {
+            background: #1b4332;
+            color: #4ade80;
+            display: block;
+        }
+
+        .status.error {
+            background: #5f1f1f;
+            color: #f87171;
+            display: block;
+        }
+
+        /* Scrollbar styling */
+        .output::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .output::-webkit-scrollbar-track {
+            background: #0f0f0f;
+        }
+
+        .output::-webkit-scrollbar-thumb {
+            background: #3a3a3a;
+            border-radius: 3px;
+        }
+
+        .output::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JWT Authentication Tester</h1>
+            <p>Test Volty API JWT implementation</p>
+        </div>
+
+        <div class="content">
+            <!-- Configuration -->
+            <div class="section">
+                <h2>Configuration</h2>
+                <div class="input-group">
+                    <label for="apiUrl">API URL:</label>
+                    <input type="text" id="apiUrl" value="http://localhost:3000" placeholder="http://localhost:3000">
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="section">
+                <h2>Tests</h2>
+                <div class="button-group">
+                    <button class="test-button" onclick="runAllTests()">Run All</button>
+                    <button class="test-button" onclick="testRegisterAndLogin()">Register & Login</button>
+                    <button class="test-button" onclick="testProtectedRoute()">Protected Route</button>
+                    <button class="test-button" onclick="testRefreshToken()">Refresh Token</button>
+                    <button class="test-button" onclick="testAuthorization()">Authorization</button>
+                    <button class="test-button clear-btn" onclick="clearLogs()">Clear</button>
+                </div>
+            </div>
+
+            <!-- Tokens -->
+            <div class="section">
+                <h2>Tokens</h2>
+                <div style="margin-bottom: 12px;">
+                    <strong style="font-size: 12px; color: #ccc;">Access Token</strong>
+                    <div class="token-display" id="accessTokenDisplay">None</div>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <strong style="font-size: 12px; color: #ccc;">Refresh Token</strong>
+                    <div class="token-display" id="refreshTokenDisplay">None</div>
+                </div>
+                <div>
+                    <strong style="font-size: 12px; color: #ccc;">User ID</strong>
+                    <div class="token-display" id="userIdDisplay">None</div>
+                </div>
+            </div>
+
+            <!-- Output -->
+            <div class="section">
+                <h2>Output</h2>
+                <div class="output" id="logs"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let accessToken = null;
+        let refreshToken = null;
+        let userId = null;
+
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value || 'http://localhost:3000';
+        }
+
+        function log(type, message) {
+            const logsDiv = document.getElementById('logs');
+            const logItem = document.createElement('div');
+            logItem.className = `log-item log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logItem.textContent = `[${timestamp}] ${message}`;
+            
+            logsDiv.appendChild(logItem);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        function updateTokenDisplay() {
+            document.getElementById('accessTokenDisplay').textContent = accessToken 
+                ? accessToken.substring(0, 40) + '...' 
+                : 'None';
+            document.getElementById('refreshTokenDisplay').textContent = refreshToken 
+                ? refreshToken.substring(0, 40) + '...' 
+                : 'None';
+            document.getElementById('userIdDisplay').textContent = userId || 'None';
+        }
+
+        async function makeRequest(method, endpoint, body = null, token = null) {
+            const url = `${getApiUrl()}${endpoint}`;
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                }
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                return { status: response.status, data, ok: response.ok };
+            } catch (error) {
+                log('error', `Request failed: ${error.message}`);
+                throw error;
+            }
+        }
+
+        async function testRegisterAndLogin() {
+            log('test', '1. Register & Login');
+            
+            const testUser = {
+                name: 'Test User ' + Date.now(),
+                email: `test-${Date.now()}@example.com`,
+                password: 'TestPass123!'
+            };
+
+            try {
+                log('info', `Registering: ${testUser.email}`);
+                let result = await makeRequest('POST', '/register', testUser);
+
+                if (result.ok) {
+                    log('success', 'User registered');
+                    userId = result.data.user.id;
+                } else {
+                    log('error', `Registration failed: ${result.data.error}`);
+                    return;
+                }
+
+                log('info', 'Logging in...');
+                result = await makeRequest('POST', '/login', {
+                    email: testUser.email,
+                    password: testUser.password
+                });
+
+                if (result.ok) {
+                    log('success', 'Login successful');
+                    accessToken = result.data.accessToken;
+                    refreshToken = result.data.refreshToken;
+                    userId = result.data.userId;
+                    updateTokenDisplay();
+                } else {
+                    log('error', `Login failed: ${result.data.error}`);
+                }
+            } catch (error) {
+                log('error', `Test error: ${error.message}`);
+            }
+        }
+
+        async function testProtectedRoute() {
+            log('test', '2. Protected Route');
+
+            if (!userId || !accessToken) {
+                log('warning', 'No tokens. Run "Register & Login" first');
+                return;
+            }
+
+            try {
+                log('info', 'GET /me/:id WITH token');
+                let result = await makeRequest('GET', `/me/${userId}`, null, accessToken);
+
+                if (result.ok) {
+                    log('success', 'Access granted with valid token');
+                } else {
+                    log('error', `Access denied: ${result.data.error}`);
+                }
+
+                log('info', 'GET /me/:id WITHOUT token');
+                result = await makeRequest('GET', `/me/${userId}`, null, null);
+
+                if (!result.ok && result.status === 401) {
+                    log('success', 'Correctly denied (no token)');
+                } else {
+                    log('error', 'Security issue: Should deny without token');
+                }
+
+                log('info', 'GET /me/:id WITH invalid token');
+                result = await makeRequest('GET', `/me/${userId}`, null, 'invalid.token');
+
+                if (!result.ok && result.status === 403) {
+                    log('success', 'Correctly rejected invalid token');
+                } else {
+                    log('error', 'Security issue: Should reject invalid token');
+                }
+            } catch (error) {
+                log('error', `Test error: ${error.message}`);
+            }
+        }
+
+        async function testRefreshToken() {
+            log('test', '3. Refresh Token');
+
+            if (!refreshToken) {
+                log('warning', 'No refresh token. Run "Register & Login" first');
+                return;
+            }
+
+            try {
+                log('info', 'Requesting new access token');
+                let result = await makeRequest('POST', '/refresh-token', { refreshToken });
+
+                if (result.ok && result.data.accessToken) {
+                    log('success', 'Token refreshed');
+                    const newToken = result.data.accessToken;
+                    
+                    log('info', 'Testing new token');
+                    result = await makeRequest('GET', `/me/${userId}`, null, newToken);
+
+                    if (result.ok) {
+                        log('success', 'New token works');
+                        accessToken = newToken;
+                        updateTokenDisplay();
+                    } else {
+                        log('error', `New token failed: ${result.data.error}`);
+                    }
+                } else {
+                    log('error', `Refresh failed: ${result.data.error}`);
+                }
+            } catch (error) {
+                log('error', `Test error: ${error.message}`);
+            }
+        }
+
+        async function testAuthorization() {
+            log('test', '4. Authorization Check');
+
+            if (!accessToken) {
+                log('warning', 'No access token. Run "Register & Login" first');
+                return;
+            }
+
+            try {
+                const testUser2 = {
+                    name: 'User 2',
+                    email: `test-${Date.now()}-2@example.com`,
+                    password: 'Password123!'
+                };
+
+                log('info', 'Creating second user');
+                let result = await makeRequest('POST', '/register', testUser2);
+                
+                if (!result.ok) {
+                    log('warning', 'Could not create second user');
+                    return;
+                }
+
+                const user2Id = result.data.user.id;
+                log('info', `User 1 accessing User 2's profile (ID: ${user2Id})`);
+                result = await makeRequest('GET', `/me/${user2Id}`, null, accessToken);
+
+                if (!result.ok && result.status === 403) {
+                    log('success', 'Correctly denied access to another user');
+                } else {
+                    log('error', 'SECURITY ISSUE: Can access another user!');
+                }
+            } catch (error) {
+                log('error', `Test error: ${error.message}`);
+            }
+        }
+
+        async function runAllTests() {
+            clearLogs();
+            log('test', 'Running Full Test Suite');
+
+            await testRegisterAndLogin();
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            await testProtectedRoute();
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            await testRefreshToken();
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            await testAuthorization();
+            
+            log('success', 'All tests completed');
+        }
+
+        window.addEventListener('load', async () => {
+            log('info', `Testing connection to ${getApiUrl()}`);
+            try {
+                const result = await makeRequest('GET', '/');
+                if (result.ok) {
+                    log('success', 'Server is running');
+                }
+            } catch (error) {
+                log('error', 'Cannot connect to server');
+            }
+        });
+    </script>
+</body>
+</html>

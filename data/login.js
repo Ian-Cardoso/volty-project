@@ -18,10 +18,18 @@ form.addEventListener('submit', async (e) => {
 
     if (!res.ok) {
       errorMsg.textContent = data.error
+      if (res.status === 401 && data.error && data.error.toLowerCase().includes('not found')) {
+        setTimeout(() => {
+          window.location.href = 'register.html'
+        }, 1500)
+      }
       return
     }
-
+  
+    localStorage.removeItem('cart')
+    localStorage.removeItem('wishlist')
     localStorage.setItem('userId', data.userId)
+    localStorage.setItem('accessToken', data.accessToken)
     window.location.href = 'volty.html'
 
   } catch {

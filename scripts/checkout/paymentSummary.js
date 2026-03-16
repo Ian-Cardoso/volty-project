@@ -158,7 +158,7 @@ export function renderPaymentSummary(){
 
       placeOrderButton.addEventListener('click', async () => {
         if (cartIsEmpty) return
-        
+
         await saveOrder()
         window.location.href = 'orders.html'
       })

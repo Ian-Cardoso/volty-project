@@ -5,6 +5,7 @@ if (!userId) {
   accountLink.addEventListener('click', (e) => {
     e.preventDefault()
     alert('Log in to access your account.')
-    window.location.href = 'login.html'
+    window.location.href = 'html/\login.html'
   })
 }
+

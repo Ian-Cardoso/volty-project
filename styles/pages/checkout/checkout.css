@@ -2,34 +2,34 @@
   max-width: 1100px;
   padding-left: 30px;
   padding-right: 30px;
-
-  margin-top: 140px;
+  margin-top: 100px;
   margin-bottom: 100px;
-
-  /* margin-left: auto;
-     margin-right auto;
-     Is a trick for centering an element horizontally
-     without needing a container. */
   margin-left: auto;
   margin-right: auto;
+  background: var(--page-background, linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%));
+  min-height: calc(100vh - 200px);
 }
 
 .page-title {
   font-weight: 700;
-  font-size: 22px;
-  margin-bottom: 18px;
+  font-size: 28px;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .checkout-grid {
   display: grid;
-  /* Here, 1fr means the first column will take
-     up the remaining space in the grid. */
   grid-template-columns: 1fr 350px;
-  column-gap: 12px;
-
-  /* Use align-items: start; to prevent the elements
-     in the grid from stretching vertically. */
+  column-gap: 20px;
   align-items: start;
+}
+
+.checkout-header-right-section {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 @media (max-width: 1000px) {
@@ -44,9 +44,12 @@
 
 .cart-item-container,
 .payment-summary {
-  border: 1px solid rgb(222, 222, 222);
-  border-radius: 4px;
-  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .cart-item-container {
@@ -54,35 +57,36 @@
 }
 
 .payment-summary {
-  padding-bottom: 5px;
+  padding-bottom: 15px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
 }
 
 @media (max-width: 1000px) {
   .payment-summary {
-    /* grid-row: 1 means this element will be placed into row
-      1 in the grid. (Normally, the row that an element is
-      placed in is determined by the order of the elements in
-      the HTML. grid-row overrides this default ordering). */
     grid-row: 1;
     margin-bottom: 12px;
+    position: static;
   }
 }
 
-.delivery-date {
-  color: rgb(71, 85, 105);
+.cart-item-title {
+  color: #1f2937;
   font-weight: 700;
-  font-size: 19px;
-  margin-top: 5px;
-  margin-bottom: 22px;
+  font-size: 18px;
+  margin-bottom: 15px;
 }
 
 .cart-item-details-grid {
   display: grid;
-  /* 100px 1fr 1fr; means the 2nd and 3rd column will
-     take up half the remaining space in the grid
-     (they will divide up the remaining space evenly). */
-  grid-template-columns: 100px 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   column-gap: 25px;
+  gap: 15px;
+}
+
+.delivery-date{
+  margin-bottom: 20px;
 }
 
 @media (max-width: 1000px) {
@@ -95,28 +99,41 @@
 .product-image {
   max-width: 100%;
   max-height: 120px;
-
-  /* margin-left: auto;
-     margin-right auto;
-     Is a trick for centering an element horizontally
-     without needing a container. */
   margin-left: auto;
   margin-right: auto;
+  border-radius: 8px;
 }
 
 .product-name {
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  color: #1f2937;
+  font-size: 16px;
 }
 
 .product-price {
-  color: rgb(22, 101, 52);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.product-quantity {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 14px;
 }
 
 .product-quantity .link-primary {
   margin-left: 3px;
+  color: #667eea;
+}
+
+.delivery-options {
+  margin-top: 25px;
 }
 
 @media (max-width: 1000px) {
@@ -127,88 +144,107 @@
 
 .delivery-options-title {
   font-weight: 700;
-  margin-bottom: 10px;
-  color: rgb(59, 130, 246);
+  margin-bottom: 15px;
+  color: #1f2937;
+  font-size: 16px;
 }
 
 .delivery-option {
   display: grid;
   grid-template-columns: 24px 1fr;
+  padding: 12px;
+  border-radius: 8px;
   margin-bottom: 12px;
+  border: 2px solid transparent;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.delivery-option-input {
-  margin-left: 0px;
-  cursor: pointer;
+.delivery-option:hover {
+  background: #f8fafc;
+  border-color: #667eea;
 }
 
-.delivery-option-input:active {
-  outline-color: rgb(9, 9, 153);
-}
-
-.js-quantity-select{
-  outline: none;
+.delivery-option input:checked {
+  accent-color: #667eea;
 }
 
 .delivery-option-date {
-  color: rgb(15, 23, 42);
-  font-weight: 500;
-  margin-bottom: 3px;
+  color: #1f2937;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 .delivery-option-price {
-  color: rgb(120, 120, 120);
-  font-size: 15px;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.js-quantity-select {
+  outline: none;
+  cursor: pointer;
 }
 
 .payment-summary-title {
   font-weight: 700;
   font-size: 18px;
-  margin-bottom: 12px;
-  color: rgb(15, 23, 42);
+  margin-bottom: 15px;
+  color: #1f2937;
 }
 
 .payment-summary-row {
   display: grid;
   grid-template-columns: 1fr auto;
   font-size: 15px;
-  margin-bottom: 9px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #4b5563;
+}
+
+.payment-summary-row.total-row {
+  font-weight: 700;
+  font-size: 18px;
+  color: #1f2937;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 .payment-summary-money {
   text-align: right;
-  color: rgb(22, 101, 52);
+  font-weight: 600;
+  color: #1f2937;
 }
 
-.subtotal-row .payment-summary-money {
-  border-top: 1px solid rgb(222, 222, 222);
+.total-row .payment-summary-money {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 18px;
 }
 
-.subtotal-row div {
-  padding-top: 9px;
-}
-
-.total-row {
-  /* color: rgb(220, 38, 38); */
-  font-weight: 700;
-  font-size: 22px;
-  border-top: 1px solid rgb(222, 222, 222);
-  padding-top: 18px;
+.discount-row {
+  color: #10b981;
 }
 
 .coupon-section {
   margin: 20px 0;
   padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
 }
 
 .coupon-section label {
   display: block;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 10px;
-  color: #333;
+  color: #1f2937;
+  font-size: 14px;
 }
 
 .coupon-input-group {
@@ -219,60 +255,170 @@
 
 #couponInput {
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 #couponInput:focus {
   outline: none;
-  border-color: #ff9900;
-  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.1);
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .apply-coupon-btn {
-  padding: 10px 20px;
-  background-color: #ff9900;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  white-space: nowrap;
+  font-size: 14px;
 }
 
 .apply-coupon-btn:hover {
-  background-color: #e68a00;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
 #couponMessage {
   font-size: 13px;
   margin-bottom: 10px;
   min-height: 20px;
+  color: #10b981;
+  font-weight: 500;
 }
 
 #discountRow {
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
-#discountRow .payment-summary-money {
-  color: #4caf50;
-  font-weight: 600;
+#themeToggle{
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: white;
 }
 
 .place-order-button {
   width: 100%;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 14px;
   border-radius: 8px;
-  font-weight: 800;
-  margin-top: 11px;
-  margin-bottom: 15px;
+  font-weight: 700;
+  margin-top: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+  font-size: 16px;
 }
 
-.main .page-title {
-  color: rgb(15, 23, 42);
+.place-order-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+/* Dark Mode */
+
+body.dark .main {
+  background: #1f2937;
+}
+
+body.dark .page-title {
+  background: linear-gradient(135deg, #a5b4fc 0%, #d8b4fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.dark .cart-item-container,
+body.dark .payment-summary {
+  background: #374151;
+  border-color: #6b7280;
+  color: #e5e7eb;
+}
+
+body.dark .cart-item-title {
+  color: #e5e7eb;
+}
+
+body.dark .product-name {
+  color: #e5e7eb;
+}
+
+body.dark .product-quantity {
+  color: #d1d5db;
+}
+
+body.dark .delivery-options-title {
+  color: #e5e7eb;
+}
+
+body.dark .delivery-option {
+  border-color: transparent;
+}
+
+body.dark .delivery-option:hover {
+  background: #4b5563;
+  border-color: #667eea;
+}
+
+body.dark .delivery-option-date {
+  color: #e5e7eb;
+}
+
+body.dark .delivery-option-price {
+  color: #a5b4fc;
+}
+
+body.dark .payment-summary-title {
+  color: #e5e7eb;
+}
+
+body.dark .payment-summary-row {
+  color: #d1d5db;
+  border-bottom-color: #6b7280;
+}
+
+body.dark .payment-summary-row.total-row {
+  color: #e5e7eb;
+}
+
+body.dark .payment-summary-money {
+  color: #e5e7eb;
+}
+
+body.dark #couponInput {
+  background: #4b5563;
+  color: #e5e7eb;
+  border-color: #6b7280;
+}
+
+body.dark #couponInput:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+body.dark .coupon-section {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #6b7280;
+}
+
+body.dark .coupon-section label {
+  color: #e5e7eb;
+}
+
+body.dark #couponMessage {
+  color: #10b981;
 }

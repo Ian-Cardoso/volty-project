@@ -1,6 +1,4 @@
-// ========================================
 // wishlist.js - Gerenciar lista de desejos
-// ========================================
 
 export async function addToWishlist(productId) {
   const userId = localStorage.getItem('userId')

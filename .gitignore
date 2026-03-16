@@ -1,1 +1,7 @@
 .env
+.checkUsers.js
+.couponTest.js
+.checkCoupon.js
+.db.js
+.testJWT.js
+.registerTest.js

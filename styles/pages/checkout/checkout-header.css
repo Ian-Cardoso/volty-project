@@ -2,7 +2,8 @@
   height: 60px;
   padding-left: 30px;
   padding-right: 30px;
-  background-color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
 
   display: flex;
   justify-content: center;
@@ -68,10 +69,12 @@
 }
 
 .return-to-home-link {
-  color: rgb(0, 113, 133);
+  color: white;
   font-size: 23px;
   text-decoration: none;
   cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 1000px) {

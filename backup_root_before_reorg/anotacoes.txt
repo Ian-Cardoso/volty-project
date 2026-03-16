@@ -1,0 +1,15 @@
+// O carrinho esta salvo em localstorage, então não tem endpoint para isso, mas poderia ter um endpoint para sincronizar o carrinho com o backend quando o usuário fizer login ou logout, ou para salvar o carrinho no banco de dados associado ao usuário.
+
+// Return e orders esta salvo no banco de dados, mas poderia ter endpoints para obter os detalhes de um pedido específico, ou para cancelar um pedido dentro de um prazo permitido.
+
+// O mesmo vale para a wishlist, que também é salva no localstorage. Poderia ter endpoints para adicionar/remover produtos da wishlist no backend, e para obter a wishlist do usuário quando ele fizer login.
+
+// Para os reviews, já tem endpoints para criar e obter reviews, mas poderia ter um endpoint para marcar um review como útil, ou para obter os reviews de um usuário específico.
+
+// O endpoint de cupons é um exemplo de funcionalidade extra que não estava no escopo inicial, mas que pode ser útil para uma loja online. Ele permite validar um código de cupom e calcular o desconto aplicável, além de listar os cupons ativos.
+
+// O código do servidor é organizado em rotas para cada funcionalidade (registro, login, perfil, pedidos, wishlist, reviews, cupons), e cada rota tem uma função assíncrona que lida com a lógica de negócio e interage com o banco de dados usando o pool do pg. O servidor também carrega os produtos de um arquivo JSON para calcular os totais dos pedidos.
+
+// O código inclui tratamento de erros e validação de dados, além de usar bcrypt para hash de senhas e Zod para validação de entrada. Ele também tem CORS habilitado para permitir requisições do frontend.
+
+// O código de teste em registerTest.js pode ser usado para verificar se o endpoint de registro e login estão funcionando corretamente, e o checkUsers.js pode ser usado para verificar se os usuários estão sendo salvos no banco de dados. O código do frontend em volty.js mostra como interagir com os endpoints do backend para funcionalidades como carrinho, wishlist e reviews.

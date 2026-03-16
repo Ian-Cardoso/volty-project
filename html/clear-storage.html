@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Limpar Storage</title>
+</head>
+<body>
+    <h1>Limpando LocalStorage...</h1>
+    <p id="status">Processando...</p>
+    
+    <script>
+        // Limpar tudo
+        localStorage.clear()
+        
+        // Ou limpar só específicos:
+        // localStorage.removeItem('cart')
+        // localStorage.removeItem('orders')
+        // localStorage.removeItem('userId')
+        
+        document.getElementById('status').textContent = 'Storage limpo! Redirecionando...'
+        setTimeout(() => {
+            window.location.href = 'volty.html'
+        }, 2000)
+    </script>
+</body>
+</html>
+

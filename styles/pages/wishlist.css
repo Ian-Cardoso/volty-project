@@ -6,6 +6,7 @@
   padding-right: 20px;
   margin-left: auto;
   margin-right: auto;
+  background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
 }
 
 .wishlist-container {
@@ -13,10 +14,13 @@
 }
 
 .wishlist-container h1 {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   margin-bottom: 30px;
-  color: #222;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .wishlist-grid {
@@ -28,16 +32,18 @@
 .wishlist-item {
   display: flex;
   gap: 20px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   background: white;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .wishlist-item:hover {
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  border-color: #bbb;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+  transform: translateY(-2px);
 }
 
 .item-image {
@@ -84,7 +90,10 @@
 .item-price {
   font-size: 24px;
   font-weight: 700;
-  color: #167a45;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 15px;
 }
 
@@ -106,24 +115,27 @@
 }
 
 .add-to-cart-btn {
-  background: #ff9900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .add-to-cart-btn:hover {
-  background: #e68a00;
-  box-shadow: 0 2px 8px rgba(255,153,0,0.3);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
 }
 
 .remove-btn {
-  background: #f0f0f0;
-  color: #222;
-  border: 1px solid #ddd;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
 }
 
 .remove-btn:hover {
-  background: #e8e8e8;
-  border-color: #999;
+  background: #f8fafc;
+  border-color: #764ba2;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .empty-message {
@@ -137,20 +149,87 @@
   margin-bottom: 20px;
 }
 
+/* Dark Mode Styles */
+body.dark .main {
+  background: #1f2937;
+}
+
+body.dark .wishlist-container h1 {
+  background: linear-gradient(135deg, #a5b4fc 0%, #d8b4fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.dark .wishlist-item {
+  background: #374151;
+  border-color: #6b7280;
+  color: #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .wishlist-item:hover {
+  background: #4b5563;
+  border-color: #667eea;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+body.dark .item-name {
+  color: #e5e7eb;
+}
+
+body.dark .item-rating {
+  color: #9ca3af;
+}
+
+body.dark .item-price {
+  background: linear-gradient(135deg, #a5b4fc 0%, #d8b4fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.dark .add-to-cart-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+body.dark .add-to-cart-btn:hover {
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+body.dark .remove-btn {
+  background: transparent;
+  color: #a5b4fc;
+  border-color: #a5b4fc;
+}
+
+body.dark .remove-btn:hover {
+  background: rgba(165, 180, 252, 0.1);
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+body.dark .empty-message {
+  color: #9ca3af;
+}
+
 .continue-shopping-btn {
   display: inline-block;
   padding: 12px 24px;
-  background: #ff9900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-decoration: none;
-  border-radius: 4px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-weight: 600;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .continue-shopping-btn:hover {
-  background: #e68a00;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
 @media (max-width: 600px) {

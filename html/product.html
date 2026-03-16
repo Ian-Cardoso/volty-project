@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Product Details - Volty</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <link rel="shortcut icon" href="../images/volty-logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../styles/shared/general.css">
+    <link rel="stylesheet" href="../styles/shared/volty-header.css">
+    <link rel="stylesheet" href="../styles/pages/product.css">
+
+  </head>
+  <body>
+
+    <div class="volty-header">
+      <div class="volty-header-left-section">
+        <a href="volty.html" class="header-link">
+          <img class="volty-logo" src="../images/volty-logo.png" alt="Volty">
+          <img class="volty-mobile-logo" src="../images/volty-logo-mobile.png.png" alt="Volty Mobile">
+        </a>
+      </div>
+
+      <div class="volty-header-middle-section">
+        <input class="search-bar" type="text" placeholder="Search">
+        <button class="search-button">
+          <img class="search-icon" src="../images/icons/search-icon.png" alt="Search">
+        </button>
+      </div>
+
+      <div class="volty-header-right-section">
+        <button id="themeToggle" class="theme-toggle header-link" title="Toggle dark/light mode"><i class="fa-solid fa-moon"></i></button>
+        <a href="account.html" class="account-link header-link" id="accountLink">
+          <i class="fa-solid fa-user"></i>
+          <span class="account-text">Account</span>
+        </a>
+
+        <a class="wishlist-link header-link" href="wishlist.html">
+          <span class="wishlist-icon">❤️</span>
+          <span class="wishlist-text">Wishlist</span>
+        </a>
+
+        <a class="orders-link header-link" href="orders.html">
+          <span class="returns-text">Returns</span>
+          <span class="orders-text">& Orders</span>
+        </a> 
+
+        <a class="cart-link header-link" href="checkout.html">
+          <img class="cart-icon" src="../images/icons/cart-icon.png" alt="Cart">
+          <div class="cart-quantity js-cart-quantity">0</div>
+          <div class="cart-text">Cart</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="product-details-container">
+        
+        <div class="product-details">
+          <div class="product-image-section">
+            <img id="productImage" class="product-image-large" src="" alt="Product Image">
+          </div>
+
+          <div class="product-info-section">
+            <h1 id="productName"></h1>
+
+            <div class="rating-section">
+              <img id="productStars" src="" alt="Rating">
+              <span id="ratingCount"></span>
+            </div>
+
+            <div class="price-section">
+              <div class="price" id="productPrice"></div>
+              <div class="in-stock">✓ In Stock</div>
+            </div>
+
+            <div class="description" id="productDescription"></div>
+
+            <div class="product-actions">
+              <div class="quantity-selector">
+                <label for="quantitySelect">Quantity:</label>
+                <select id="quantitySelect">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+
+              <button id="addToCartBtn" class="add-to-cart-btn">
+                <img src="../images/icons/cart-icon.png" alt="">
+                Add to Cart
+              </button>
+
+              <button id="addToWishlistBtn" class="wishlist-icon-btn">
+                ♡ Add to Wishlist
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="reviews-section">
+          <h2>Customer Reviews</h2>
+
+          <div class="review-form">
+            <h3>Leave a Review</h3>
+
+            <div class="form-group">
+              <label for="reviewRating">Rating:</label>
+              <select id="reviewRating">
+                <option value="">Select a rating</option>
+                <option value="1">1 - Poor</option>
+                <option value="2">2 - Fair</option>
+                <option value="3">3 - Good</option>
+                <option value="4">4 - Very Good</option>
+                <option value="5">5 - Excellent</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="reviewTitle">Title:</label>
+              <input 
+                id="reviewTitle" 
+                type="text" 
+                placeholder="Brief title of your review"
+                maxlength="100"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="reviewComment">Your Review:</label>
+              <textarea 
+                id="reviewComment" 
+                placeholder="Share your experience with this product..."
+                rows="5"
+                maxlength="500"
+              ></textarea>
+            </div>
+
+            <div id="reviewMessage" class="review-message"></div>
+
+            <button id="submitReviewBtn" class="submit-review-button">
+              Submit Review
+            </button>
+          </div>
+
+          <div class="reviews-list-container">
+            <h3>What customers are saying</h3>
+            <div id="reviewsList" class="reviews-list">
+              <p class="loading">Loading reviews...</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script type="module" src="../scripts/product.js"></script>    <script src="../scripts/theme.js"></script>  </body>
+</html>
+

@@ -12,8 +12,6 @@
 -- Criar índice para melhorar performance
 -- CREATE INDEX IF NOT EXISTS idx_wishlist_user_id ON wishlist(user_id);
 
--- ========================================
-
 -- 2. TABELA REVIEWS (Avaliações e Comentários)
 -- Usuários deixam reviews nos produtos
 -- CREATE TABLE IF NOT EXISTS reviews (
@@ -34,8 +32,6 @@
 -- CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
 -- CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
 -- CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating);
-
--- ========================================
 
 -- 3. TABELA PROMOÇÕES/CUPONS
 -- Gerenciar cupons e promoções
@@ -59,8 +55,6 @@
 -- CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
 -- CREATE INDEX IF NOT EXISTS idx_coupons_is_active ON coupons(is_active);
 
--- ========================================
-
 -- 4. TABELA COUPON_USAGE (Histórico de Uso de Cupons)
 -- Rastrear quem usou qual cupom
 -- CREATE TABLE IF NOT EXISTS coupon_usage (
@@ -79,8 +73,6 @@
 -- CREATE INDEX IF NOT EXISTS idx_coupon_usage_coupon_id ON coupon_usage(coupon_id);
 -- CREATE INDEX IF NOT EXISTS idx_coupon_usage_user_id ON coupon_usage(user_id);
 
--- ========================================
-
 -- 5. ADICIONAR COLUNA DE CUPOM NA TABELA ORDERS
 -- Se a tabela orders não tiver ainda
 -- ALTER TABLE orders 
@@ -89,20 +81,12 @@
 -- ADD COLUMN IF NOT EXISTS final_total NUMERIC(10, 2),
 -- ADD CONSTRAINT fk_orders_coupon FOREIGN KEY (coupon_id) REFERENCES coupons(id) ON DELETE SET NULL;
 
--- ========================================
--- DADOS DE EXEMPLO
--- ========================================
-
 -- Exemplo de cupons
 -- INSERT INTO coupons (code, description, discount_type, discount_value, max_uses, min_order_amount, valid_from, valid_until, is_active)
 -- VALUES 
 --   ('WELCOME10', 'Bem-vindo! 10% de desconto', 'percentage', 10, 100, 50.00, NOW(), NOW() + INTERVAL '30 days', true),
 --   ('SUMMER20', 'Desconto de verão - R$ 20 off', 'fixed', 20.00, 50, 100.00, NOW(), NOW() + INTERVAL '60 days', true),
 --   ('NEWUSER15', '15% para novos usuários', 'percentage', 15, 200, 30.00, NOW(), NOW() + INTERVAL '45 days', true);
-
--- ========================================
--- INFORMAÇÕES DAS TABELAS
--- ========================================
 
 /*
 WISHLIST:

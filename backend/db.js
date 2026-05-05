@@ -6,12 +6,10 @@ import pkg from 'pg'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// Carregar .env da raiz do projeto para garantir que as variáveis de ambiente sejam acessíveis
 dotenv.config({ path: path.resolve(__dirname, '../.env') })
 
 const { Pool } = pkg
 
-// Validar variáveis de ambiente obrigatórias
 const requiredEnvVars = ['DB_USER', 'DB_HOST', 'DB_NAME', 'DB_PASSWORD', 'DB_PORT']
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName])
 

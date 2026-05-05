@@ -1,39 +1,52 @@
-// wishlist.js - Gerenciar lista de desejos
-
 export async function addToWishlist(productId) {
-  const userId = localStorage.getItem('userId')
-  
-  if (!userId) {
-    alert('Please login to add to wishlist')
-    return false
+  const userId = parseInt(localStorage.getItem('userId'));
+  const token = localStorage.getItem('accessToken');
+
+  if (!userId || !token) {
+    alert('Por favor, faça login para adicionar aos favoritos.');
+    return false;
   }
 
   try {
     const response = await fetch('http://localhost:3000/wishlist', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
       body: JSON.stringify({ userId, productId })
-    })
+    });
 
-    if (!response.ok) throw new Error('Failed to add to wishlist')
+    if (!response.ok) {
+      if (response.status === 401) {
+        alert('Sessão expirada. Por favor, faça login novamente.');
+      }
+      throw new Error('Failed to add to wishlist');
+    }
     
-    console.log('Added to wishlist!')
-    return true
+    console.log('Adicionado com sucesso!');
+    return true;
   } catch (error) {
-    console.error('Error:', error)
-    return false
+    console.error('Error:', error);
+    return false;
   }
 }
 
 export async function removeFromWishlist(productId) {
   const userId = localStorage.getItem('userId')
+  const token = localStorage.getItem('accessToken')
   
   if (!userId) return false
 
   try {
     const response = await fetch(
       `http://localhost:3000/wishlist/${userId}/${productId}`,
-      { method: 'DELETE' }
+      { 
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}` 
+        }
+       }
     )
 
     if (!response.ok) throw new Error('Failed to remove')
@@ -48,20 +61,38 @@ export async function removeFromWishlist(productId) {
 
 export async function getWishlist() {
   const userId = localStorage.getItem('userId')
+  const token = localStorage.getItem('accessToken')
   
-  if (!userId) return []
+  if (!userId || !token) return []
 
   try {
-    const response = await fetch(`http://localhost:3000/wishlist/${userId}`)
+    const response = await fetch(`http://localhost:3000/wishlist/${userId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+
+    if (!response.ok) {
+      console.error('Failed to fetch wishlist')
+      return []
+  }
+
     const data = await response.json()
-    return data
+
+    return Array.isArray(data) ? data : []
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error fetching wishlist:', error)
     return []
   }
 }
 
 export async function isInWishlist(productId) {
-  const wishlist = await getWishlist()
-  return wishlist.some(item => item.product_id === productId)
+  const wishlist = await getWishlist();
+  
+  if (!Array.isArray(wishlist)) return false;
+
+  return wishlist.some(item => {
+    const idNoBanco = String(item.product_id).trim();
+    const idBuscado = String(productId).trim();
+    
+    return idNoBanco === idBuscado;
+  });
 }

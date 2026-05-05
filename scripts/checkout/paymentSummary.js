@@ -54,8 +54,8 @@ export function renderPaymentSummary(){
             Order Summary
           </div>
 
-          <div class="payment-summary-row">
-            <div>Items (3):</div>
+<div class="payment-summary-row">
+            <div>Items (${cart.reduce((sum, item) => sum + item.quantity, 0)} ${cart.reduce((sum, item) => sum + item.quantity, 0) === 1 ? 'item' : 'items'}):</div>
             <div class="payment-summary-money">$${formatCurrency(productPriceCents)}</div>
           </div>
 

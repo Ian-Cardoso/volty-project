@@ -188,3 +188,7 @@ select:focus,
 input:focus {
   outline: 2px solid rgb(255, 153, 0);
 }
+
+.swagger-ui .topbar .topbar-wrapper {
+    justify-content: space-between !important; 
+}

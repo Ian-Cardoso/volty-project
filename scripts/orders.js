@@ -61,7 +61,7 @@ function renderOrders() {
           </div>
           <div class="order-header-right-section">
             <div class="order-header-label">Order ID:</div>
-            <div>${Math.random().toString(36).substring(2, 18)}</div>
+            <div>${order.displayId}</div>
           </div>
         </div>
         <div class="order-details-grid">
@@ -98,6 +98,8 @@ function renderOrders() {
       updateCartQuantity()
     })
   })
+
+  console.log('Pedidos recebidos do servidor:', orders)
 }
 
 function updateCartQuantity() {

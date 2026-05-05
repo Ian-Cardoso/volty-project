@@ -121,3 +121,22 @@ COUPON_USAGE:
 - Registra cada vez que um cupom é usado
 - Ligado com order para rastrear em qual pedido foi usado
 */
+
+-- 6. ADICIONAR IS_ADMIN EM USERS E CRIAR PRODUTOS
+ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false;
+
+CREATE TABLE IF NOT EXISTS products (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  price NUMERIC(10,2) NOT NULL,
+  image VARCHAR(1024) NOT NULL,
+  stock BOOLEAN DEFAULT true,
+  rating NUMERIC(3,2) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
+CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);

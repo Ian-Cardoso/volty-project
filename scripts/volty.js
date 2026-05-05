@@ -49,7 +49,7 @@ function renderProducts(productsToRender) {
         </button>
       </div>
       <div class="product-name limit-text-to-2-lines">
-        <a href="html/product.html?id=${product.id}" class="product-name-link">${product.name}</a>
+        <a href="product.html?id=${product.id}" class="product-name-link">${product.name}</a>
       </div>
       <div class="product-rating-container">
         <img class="product-rating-stars" src="${product.getStarsUrl()}">

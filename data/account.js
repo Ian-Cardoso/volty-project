@@ -1,10 +1,10 @@
 const userId = localStorage.getItem('userId')
 const token = localStorage.getItem('accessToken')
 
-// if (!userId || !token) {
-//   alert('User not logged in')
-//   window.location.href = 'login.html'
-// }
+if (!userId || !token) {
+  alert('User not logged in')
+  window.location.href = 'login.html'
+}
 
 const name = document.getElementById('name')
 const email = document.getElementById('email')
@@ -38,10 +38,10 @@ fetch(`http://localhost:3000/me/${userId}`, {
     city.value = user.city || ''
     state.value = user.state || ''
   })
-  // .catch(err => {
-  //   console.error(err);
-  //   window.location.href = 'login.html'
-  // })
+  .catch(err => {
+    console.error(err);
+    window.location.href = 'login.html'
+  })
 
 saveProfile.onclick = saveAddress.onclick = () => {
   fetch(`http://localhost:3000/me/${userId}`, {

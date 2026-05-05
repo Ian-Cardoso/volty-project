@@ -24,8 +24,6 @@ toggleConfirmPassword.addEventListener('click', () => {
   toggleConfirmPassword.classList.toggle('fa-eye-slash')
 })
 
-// Form submission
-
 form.addEventListener('submit', async (e) => {
   e.preventDefault()
 

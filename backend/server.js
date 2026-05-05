@@ -1,4 +1,6 @@
 import express from 'express'
+import nodemailer from 'nodemailer'
+import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import pkg from 'pg'
@@ -10,6 +12,8 @@ import dotenv from 'dotenv'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swagger.js'
 import { UserSchema } from '../scripts/validators/userValidator.js'
+import { z } from 'zod'
+import prisma from './prismaClient.js'
 
 dotenv.config()
 
@@ -22,23 +26,30 @@ const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'products.j
 const { Pool } = pkg
 const app = express()
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://127.0.0.1:5500,null').split(',')
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://127.0.0.1:5501,null').split(',')
 
 app.use(cors({
-  origin: (origin, callback) => {
-    const cleanOrigin = origin ? origin.trim() : null;
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     const cleanOrigin = origin ? origin.trim() : null;
     
-    if (!origin || allowedOrigins.map(o => o.trim()).includes(cleanOrigin)) {
-      callback(null, true)
-    } else {
-      console.log('CORS bloqueou a origem:', origin); // Log para debug
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
-}))
+//     if (!origin || allowedOrigins.map(o => o.trim()).includes(cleanOrigin)) {
+//       callback(null, true)
+//     } else {
+//       console.log('CORS bloqueou a origem:', origin); // Log para debug
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   },
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   optionsSuccessStatus: 200
+// }))
 
 app.use((req, res, next) => {
   console.log('HTTP', req.method, req.path)
@@ -46,14 +57,45 @@ app.use((req, res, next) => {
 })
 
 app.use(express.json())
+app.use('/assets', express.static(path.join(__dirname, '../html')))
+app.use('/scripts', express.static(path.join(__dirname, '../scripts')))
+app.use('/styles', express.static(path.join(__dirname, '../styles')))
+app.get('/admin-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '../html/admin-dashboard.html'))
+})
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   swaggerOptions: {
     tryItOutEnabled: true,
     deepLinking: true
   },
-  customCss: '.swagger-ui { background: #0f0f0f; } .swagger-ui .topbar { background: #1a1a1a; }'
+  customCss: ` .swagger-ui { background: #0f0f0f; } 
+              .swagger-ui .topbar { background: #1a1a1a; } 
+              .swagger-ui .topbar .topbar-wrapper { justify-content: space-between !important }
+              .dark-mode-toggle { display: none }`
 }))
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT),
+  secure: true,
+  auth:{
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD
+  }, 
+  tls: {
+    rejectUnauthorized: false,
+    // minVersion: 'TLSv1.2'
+  }
+})
+
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("Erro na configuração do SMTP:", error);
+  } else {
+    console.log("Servidor pronto para enviar mensagens!");
+  }
+});
 
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
@@ -81,6 +123,81 @@ const authenticateToken = (req, res, next) => {
   })
 }
 
+const requireAdmin = async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId }
+    })
+
+    if (!user || !user.isAdmin) {
+      return res.status(403).json({ error: 'Admin access required' })
+    }
+
+    next()
+  } catch (err) {
+    console.error('Admin verification error:', err)
+    res.status(500).json({ error: 'Unable to verify admin privileges' })
+  }
+}
+
+const ProductSchema = z.object({
+  name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
+  description: z.string().min(10, 'A descrição deve ter pelo menos 10 caracteres'),
+  price: z.number().positive('O preço deve ser um valor positivo'),
+  imageUrl: z.string().url('A imagem deve ser uma URL válida'),
+  inStock: z.boolean()
+})
+
+// async function sendOrderConfirmation(user, orderId, orderData, items) {
+//   const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}&userId=${user.id}`
+  
+//   // HTML template with order details, items list, total, etc.
+  
+//   await transporter.sendMail({
+//     from: process.env.FROM_EMAIL,
+//     to: user.email,
+//     subject: `Pedido #${generateOrderDisplayId(orderId)} confirmado!`,
+//     html: orderEmailTemplate
+//   })
+// }
+
+async function sendPasswordResetEmail(user, token) {
+  const resetLink = `${process.env.FRONTEND_URL || 'http://127.0.0.1:5501'}/html/reset-password.html?token=${token}&userId=${user.id}`
+  
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redefinir Senha - Volty</title>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h2>Oi ${user.name},</h2>
+  <p>Você solicitou redefinição de senha.</p>
+  
+  <a href="${resetLink}" style="background: #183480; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">🔑  Redefinir Senha</a>
+  
+  <p style="margin-top: 20px;"><small>Link válido por 15 minutos. Se você não solicitou, ignore este email.</small></p>
+  
+  <hr>
+  <p>Atenciosamente,<br>Equipe Volty</p>
+</body>
+</html>`;
+
+  await transporter.sendMail({
+    from: process.env.FROM_EMAIL || '"Volty" <ian8975c@gmail.com>',
+    to: user.email,
+    subject: 'Redefinir sua senha - Volty',
+    html
+  })
+}
+
+
+const generateOrderDisplayId = (dbId) => {
+  const offset = 10000; 
+  return `ORD-${(dbId + offset).toString(36).toUpperCase()}`;
+};
+
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -96,7 +213,6 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    // Normalização forte do email
     const normalizedEmail = req.body.email.trim().toLowerCase()
 
     console.log('EMAIL NORMALIZADO:', normalizedEmail)
@@ -133,7 +249,7 @@ app.post('/register', async (req, res) => {
 
   return res.status(400).json({
     error: err.message,
-    fullError: err
+    // fullError: err
   })
 }
 })
@@ -403,14 +519,14 @@ app.post('/login', async (req, res) => {
 
     const userId = result.rows[0].id
 
-    // Generate Access Token (short-lived)
+    // Generate Access Token 15 min
     const accessToken = jwt.sign(
       { userId, email },
       process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: process.env.JWT_EXPIRATION || '15m' }
     )
 
-    // Generate Refresh Token (long-lived)
+    // Generate Refresh Token 
     const refreshToken = jwt.sign(
       { userId },
       process.env.JWT_REFRESH_SECRET || 'your_refresh_secret',
@@ -495,6 +611,78 @@ app.post('/refresh-token', (req, res) => {
   }
 })
 
+app.post('/admin/products', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const validatedData = ProductSchema.parse(req.body)
+
+    const product = await prisma.product.create({
+      data: {
+        name: validatedData.name,
+        description: validatedData.description,
+        price: validatedData.price,
+        imageUrl: validatedData.imageUrl,
+        inStock: validatedData.inStock
+      }
+    })
+
+    res.status(201).json({ message: 'Product created', product })
+  } catch (err) {
+    console.error('Create product error:', err)
+
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ error: err.errors.map(e => e.message).join(', ') })
+    }
+
+    res.status(500).json({ error: 'Error creating product' })
+  }
+})
+
+app.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body
+    const user = await pool.query('SELECT id, email, name FROM users WHERE email=$1', [email])
+
+    if (!user.rows[0]) return res.status(404).json({ error: 'User not found' })
+
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+
+    await pool.query(
+      'INSERT INTO reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
+      [user.rows[0].id, token, expiresAt]
+    )
+
+    await sendPasswordResetEmail(user.rows[0], token)
+    res.json({ message: 'Password reset email sent' })
+
+  } catch (error) {
+    console.error('Erro ao enviar e-mail:', error)
+    res.json({ message: 'Token gerado no banco, mas o e-mail falhou.', token: token });
+  }
+})
+
+app.post('/reset-password', async (req, res) => {
+  const { token, userId, newPassword } = req.body
+
+  const result = await pool.query(
+    'SELECT * FROM reset_tokens WHERE user_id=$1 AND token=$2 AND expires_at > NOW() AND NOT used',
+    [userId, token]
+  )
+
+  if (!result.rows[0]) return res.status(400).json({error: 'Invalid/expired token'})
+  
+  const hash = await bcrypt.hash(newPassword, 10)
+  await pool.query('UPDATE users SET password=$1 WHERE id=$2', [hash, userId])
+  await pool.query('UPDATE reset_tokens SET used=true WHERE id=$1', [result.rows[0].id])
+
+  const user = await pool.query('SELECT * FROM users WHERE id=$1', [userId])
+
+  // await sendOrderConfirmation(user.rows[0], orderId, {total, finalTotal, discountAmount}, cart)
+  
+  res.json({message: 'Password reset successful'})
+})
+
+
 //orders route
 
 /**
@@ -549,12 +737,10 @@ app.post('/refresh-token', (req, res) => {
 app.post('/orders', authenticateToken, async (req, res) => {
   let { userId, cart, couponId, couponCode } = req.body
 
-  // Verify user can only create orders for themselves
   if (req.user.userId !== userId) {
     return res.status(403).json({ error: 'Unauthorized' })
   }
 
-  // if couponCode was provided, look up its id
   if (!couponId && couponCode) {
     const cRes = await pool.query(
       'SELECT id FROM coupons WHERE code=$1 AND is_active=true',
@@ -680,7 +866,6 @@ app.post('/orders', authenticateToken, async (req, res) => {
 app.get('/orders/:userId', authenticateToken, async (req, res) => {
   const { userId } = req.params
 
-  // Verify user can only view their own orders
   if (req.user.userId !== parseInt(userId)) {
     return res.status(403).json({ error: 'Unauthorized' })
   }
@@ -691,7 +876,12 @@ app.get('/orders/:userId', authenticateToken, async (req, res) => {
       [userId]
     )
 
-    res.json(orders.rows)
+    const ordersWithDisplayId = orders.rows.map(order => ({
+      ...order,
+      displayId: generateOrderDisplayId(order.id)
+    }))
+
+    res.json(ordersWithDisplayId)
   } catch (err) {
     console.error('Fetch orders error:', err)
     res.status(500).json({ error: 'Server error' })

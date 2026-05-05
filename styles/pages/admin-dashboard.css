@@ -1,0 +1,195 @@
+:root {
+  color-scheme: dark;
+  --bg: #08101f;
+  --surface: #0f1b2f;
+  --surface-strong: #17283f;
+  --text: #f8f9fd;
+  --muted: #98a6ba;
+  --border: rgba(255,255,255,0.08);
+  --accent: #4f8cff;
+  --accent-soft: rgba(79,140,255,0.14);
+  --success: #4ade80;
+  --danger: #fb7185;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, rgba(79,140,255,0.18), transparent 32%),
+              linear-gradient(180deg, #07101d 0%, #05131b 100%);
+  color: var(--text);
+}
+
+.admin-shell {
+  padding: 32px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.admin-panel {
+  width: min(1120px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+}
+
+.admin-header {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.admin-header h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 2.5vw, 2.75rem);
+}
+
+.admin-header p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 680px;
+}
+
+.auth-card,
+.preview-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 28px;
+}
+
+.auth-card label,
+.admin-form label {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.auth-card input,
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  padding: 14px 16px;
+  font-size: 0.96rem;
+}
+
+.auth-card {
+  display: grid;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  border-radius: 16px;
+  padding: 14px 22px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #1170ff);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-form {
+  display: grid;
+  gap: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.form-grid label.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.preview-card {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.preview-image {
+  width: 100%;
+  min-height: 220px;
+  background: rgba(255,255,255,0.04) center/cover no-repeat;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,0.4);
+  overflow: hidden;
+}
+
+.preview-card strong {
+  display: block;
+  font-size: 1.35rem;
+  margin-bottom: 10px;
+}
+
+.preview-meta {
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+.message-box {
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-top: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.message-box.success {
+  background: rgba(74, 222, 128, 0.15);
+  color: #d7ffd9;
+}
+
+.message-box.error {
+  background: rgba(251, 113, 133, 0.18);
+  color: #ffd6dc;
+}
+
+@media (max-width: 860px) {
+  .form-grid,
+  .preview-card {
+    grid-template-columns: 1fr;
+  }
+}

@@ -52,10 +52,10 @@ function updateWishlistButton() {
   const btn = document.getElementById('addToWishlistBtn')
   if (isInWishlistState) {
     btn.classList.add('in-wishlist')
-    btn.textContent = '♥ Remove from Wishlist'
+    btn.textContent = 'Remove from Wishlist'
   } else {
     btn.classList.remove('in-wishlist')
-    btn.textContent = '♡ Add to Wishlist'
+    btn.textContent = 'Add to Wishlist'
   }
 }
 
@@ -70,7 +70,7 @@ async function handleAddToCart() {
 
   const btn = document.getElementById('addToCartBtn')
   const originalText = btn.textContent
-  btn.textContent = '✓ Added to Cart!'
+  btn.textContent = 'Added to Cart!'
   btn.disabled = true
 
   setTimeout(() => {
@@ -106,19 +106,19 @@ async function handleSubmitReview() {
   const messageEl = document.getElementById('reviewMessage')
 
   if (!rating) {
-    messageEl.textContent = '❌ Please select a rating'
+    messageEl.textContent = 'Please select a rating'
     messageEl.style.color = '#d32f2f'
     return
   }
 
   if (!title.trim()) {
-    messageEl.textContent = '❌ Please enter a title'
+    messageEl.textContent = 'Please enter a title'
     messageEl.style.color = '#d32f2f'
     return
   }
 
   if (!comment.trim()) {
-    messageEl.textContent = '❌ Please enter a comment'
+    messageEl.textContent = 'Please enter a comment'
     messageEl.style.color = '#d32f2f'
     return
   }
@@ -127,7 +127,7 @@ async function handleSubmitReview() {
     const success = await createReview(productId, rating, title, comment)
 
     if (success) {
-      messageEl.textContent = '✓ Review submitted successfully!'
+      messageEl.textContent = 'Review submitted successfully!'
       messageEl.style.color = '#4caf50'
 
       document.getElementById('reviewRating').value = ''
@@ -139,11 +139,11 @@ async function handleSubmitReview() {
         messageEl.textContent = ''
       }, 1500)
     } else {
-      messageEl.textContent = '❌ Failed to submit review'
+      messageEl.textContent = 'Failed to submit review'
       messageEl.style.color = '#d32f2f'
     }
   } catch (error) {
-    messageEl.textContent = '❌ Error submitting review'
+    messageEl.textContent = 'Error submitting review'
     messageEl.style.color = '#d32f2f'
   }
 }

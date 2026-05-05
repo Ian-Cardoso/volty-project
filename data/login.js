@@ -1,6 +1,8 @@
 const form = document.getElementById('loginForm')
 const errorMsg = document.getElementById('errorMsg')
 
+import * as forgotPassword from './forgotPassword.js'
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault()
 
@@ -34,5 +36,21 @@ form.addEventListener('submit', async (e) => {
 
   } catch {
     errorMsg.textContent = 'Error connecting to server.'
+  }
+})
+
+// Forgot password handler
+document.getElementById('forgotPasswordLink')?.addEventListener('click', async (e) => {
+  e.preventDefault()
+  const email = document.getElementById('email').value.trim()
+  if (!email) {
+    errorMsg.textContent = 'Enter your email first'
+    return
+  }
+  try {
+    await forgotPassword.forgotPassword(email)
+    errorMsg.textContent = ''
+  } catch (error) {
+    errorMsg.textContent = error.message
   }
 })

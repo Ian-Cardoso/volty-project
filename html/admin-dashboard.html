@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Volty</title>
+  <link rel="stylesheet" href="/styles/pages/admin-dashboard.css" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="admin-panel">
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">Admin Panel</p>
+          <h1>Product Registration</h1>
+          <p>Use this dashboard to register new products and manage inventory easily.</p>
+        </div>
+      </header>
+
+      <div class="auth-card">
+        <label for="jwtToken">Admin Token</label>
+        <input id="jwtToken" type="text" placeholder="Paste your JWT token here" />
+        <button id="saveTokenBtn" class="btn-secondary">Save Token</button>
+      </div>
+
+      <form id="productForm" class="admin-form">
+        <div class="form-grid">
+          <label>
+            Product Name
+            <input id="name" type="text" placeholder="Sport Shoes" required />
+          </label>
+          <label>
+            Price
+            <input id="price" type="number" step="0.01" placeholder="199.90" required />
+          </label>
+          <label>
+            Image URL
+            <input id="imageUrl" type="url" placeholder="https://..." required />
+          </label>
+          <label>
+            Stock Availability
+            <select id="inStock">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </label>
+          <label class="full-width">
+            Description
+            <textarea id="description" rows="5" placeholder="Product description" required></textarea>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Register Product</button>
+          <button type="button" id="clearBtn" class="btn-secondary">Clear Fields</button>
+        </div>
+      </form>
+
+      <section class="preview-card">
+        <div class="preview-image" id="previewImage">Preview</div>
+        <div>
+          <strong id="previewTitle">Product Name</strong>
+          <p id="previewDescription">The description will appear here as you type.</p>
+          <p class="preview-meta"><span id="previewPrice">$ 0.00</span> • <span id="previewStock">In Stock</span></p>
+        </div>
+      </section>
+
+      <div id="messageBox" class="message-box"></div>
+    </section>
+  </main>
+
+  <script src="/scripts/admin-dashboard.js"></script>
+</body>
+</html>

@@ -312,7 +312,6 @@
   font-size: 12px;
 }
 
-/* Category Filter Bar Styles */
 .category-filter-bar {
   position: fixed;
   top: 70px;
@@ -363,7 +362,6 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* Remover scroll bar na categoria filter bar */
 .filter-container::-webkit-scrollbar {
   height: 4px;
 }
@@ -381,12 +379,10 @@
   background: var(--text-primary);
 }
 
-/* Ajustar main para acomodar a barra de filtros fixa */
 .main {
   margin-top: 150px;
 }
 
-/* Dark mode adjustments */
 body.dark .category-filter-bar {
   background: #1a1a1a;
   border-bottom-color: #333;
@@ -415,4 +411,18 @@ body.dark .filter-btn:hover {
   .main {
     margin-top: 140px;
   }
+}
+
+@media (max-width: 800px) {
+  .category-filter-bar {
+    position: fixed;
+    top: 21%;
+    left: 0;
+    right: 0;
+    background: var(--header-background);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 50;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+}
 }

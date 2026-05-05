@@ -1,6 +1,5 @@
 const BASE_URL = 'http://localhost:3000';
 
-// Cores para output
 const colors = {
   reset: '\x1b[0m',
   green: '\x1b[32m',

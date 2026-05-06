@@ -1,7 +1,3 @@
-// Forgot Password Handler - for login page "Forgot password?" link
-// No import - use CDN script tag in HTML
-// Swal is global
-
 export async function forgotPassword(email) {
   try {
     const response = await fetch('http://localhost:3000/forgot-password', {

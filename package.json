@@ -1,33 +1,30 @@
 {
-  "name": "javascript-amazon-project",
+  "name": "volty-project-prisma",
   "version": "1.0.0",
   "type": "module",
-  "description": "",
+  "description": "Projeto Volty migrado para Prisma",
   "main": "backend/server.js",
   "scripts": {
     "dev": "nodemon backend/server.js",
     "test": "node --test",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "seed": "node prisma/seed.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "crypto": "^1.0.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^8.0.4",
-    "pg": "^8.20.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@prisma/client": "^7.8.0",
     "@prisma/internals": "^7.8.0",
+    "@types/node": "^22.0.0",
     "dotenv": "^17.4.2",
     "nodemon": "^3.1.14",
     "prisma": "^7.8.0"

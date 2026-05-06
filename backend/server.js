@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import pkg from 'pg'
+import { Prisma } from '@prisma/client'
 import cors from 'cors'
 import fs from 'fs'
 import path from 'path'
@@ -22,8 +22,6 @@ const __dirname = path.dirname(__filename) //caminho do diretório atual
 
 // Carregar produtos
 const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8'))
-
-const { Pool } = pkg
 const app = express()
 
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://127.0.0.1:5501,null').split(',')
@@ -198,14 +196,6 @@ const generateOrderDisplayId = (dbId) => {
   return `ORD-${(dbId + offset).toString(36).toUpperCase()}`;
 };
 
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-})
-
 app.post('/register', async (req, res) => {
   try {
 
@@ -226,24 +216,26 @@ app.post('/register', async (req, res) => {
 
     const hash = await bcrypt.hash(validatedData.password, 10)
 
-    const result = await pool.query(
-      `INSERT INTO users (name, email, password)
-       VALUES ($1, $2, $3)
-       RETURNING id, email`,
-      [validatedData.name, validatedData.email, hash]
-    )
+    const user = await prisma.user.create({
+      data: {
+        name: validatedData.name,
+        email: validatedData.email,
+        password: hash
+      },
+      select: { id: true, email: true }
+    })
 
-    console.log('USUÁRIO CRIADO:', result.rows[0])
+    console.log('USUÁRIO CRIADO:', user)
 
     return res.status(201).json({
       message: 'User created',
-      user: result.rows[0]
+      user
     })
 
   } catch (err) {
   console.error('ERRO COMPLETO:', err)
 
-  if (err.code === '23505') {
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
     return res.status(409).json({ error: 'E-mail already registered' })
   }
 
@@ -303,16 +295,16 @@ app.get('/me/:id', authenticateToken, async (req, res) => {
   }
 
  try {
-    const result = await pool.query(
-      'SELECT id, name, email, cep, street, city, state FROM users WHERE id=$1',
-      [id]
-    )
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+      select: { id: true, name: true, email: true, cep: true, street: true, city: true, state: true }
+    })
 
-    if (!result.rows.length) {
+    if (!user) {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    res.json(result.rows[0])
+    res.json(user)
   } catch (err) {
     res.status(500).json({ error: 'Database error' })
   }
@@ -375,16 +367,17 @@ app.put('/me/:id', authenticateToken, async (req, res) => {
   }
 
   try {
-    await pool.query(
-      `UPDATE users 
-       SET name=$1, cep=$2, street=$3, city=$4, state=$5
-       WHERE id=$6`,
-      [name, cep, street, city, state, id]
-    )
+    await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: { name, cep, street, city, state }
+    })
 
     res.json({ message: 'Account updated' })
   } catch (err) {
     console.error('Update error:', err)
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+      return res.status(404).json({ error: 'User not found' })
+    }
     res.status(500).json({ error: 'Server error' })
   }
 })
@@ -439,27 +432,26 @@ app.put('/me/:id/password', authenticateToken, async (req, res) => {
   }
 
   try {
-    // Verify current password
-    const userResult = await pool.query(
-      'SELECT password FROM users WHERE id=$1',
-      [id]
-    )
+    const existingUser = await prisma.user.findUnique({
+      where: { id: parseInt(id) },
+      select: { password: true }
+    })
 
-    if (!userResult.rows.length) {
+    if (!existingUser) {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const isValid = await bcrypt.compare(currentPassword, userResult.rows[0].password)
+    const isValid = await bcrypt.compare(currentPassword, existingUser.password)
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid current password' })
     }
 
     const hash = await bcrypt.hash(newPassword, 10)
 
-    await pool.query(
-      'UPDATE users SET password=$1 WHERE id=$2',
-      [hash, id]
-    )
+    await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: { password: hash }
+    })
 
     res.json({ message: 'Password updated' })
   } catch (err) {
@@ -504,20 +496,19 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password required' })
     }
 
-    const result = await pool.query(
-      'SELECT id, password, email FROM users WHERE email=$1',
-      [email]
-    )
+    const user = await prisma.user.findUnique({
+      where: { email }
+    })
 
-    if (!result.rows.length)
+    if (!user)
       return res.status(401).json({ error: 'Invalid credentials' })
 
-    const valid = await bcrypt.compare(password, result.rows[0].password)
+    const valid = await bcrypt.compare(password, user.password)
 
     if (!valid)
       return res.status(401).json({ error: 'Invalid credentials' })
 
-    const userId = result.rows[0].id
+    const userId = user.id
 
     // Generate Access Token 15 min
     const accessToken = jwt.sign(
@@ -640,19 +631,26 @@ app.post('/admin/products', authenticateToken, requireAdmin, async (req, res) =>
 app.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body
-    const user = await pool.query('SELECT id, email, name FROM users WHERE email=$1', [email])
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, name: true }
+    })
 
-    if (!user.rows[0]) return res.status(404).json({ error: 'User not found' })
+    if (!user) return res.status(404).json({ error: 'User not found' })
 
     const token = crypto.randomBytes(32).toString('hex')
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
-    await pool.query(
-      'INSERT INTO reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
-      [user.rows[0].id, token, expiresAt]
-    )
+    await prisma.resetToken.create({
+      data: {
+        userId: user.id,
+        token,
+        expiresAt,
+        used: false
+      }
+    })
 
-    await sendPasswordResetEmail(user.rows[0], token)
+    await sendPasswordResetEmail(user, token)
     res.json({ message: 'Password reset email sent' })
 
   } catch (error) {
@@ -664,22 +662,28 @@ app.post('/forgot-password', async (req, res) => {
 app.post('/reset-password', async (req, res) => {
   const { token, userId, newPassword } = req.body
 
-  const result = await pool.query(
-    'SELECT * FROM reset_tokens WHERE user_id=$1 AND token=$2 AND expires_at > NOW() AND NOT used',
-    [userId, token]
-  )
+  const resetToken = await prisma.resetToken.findFirst({
+    where: {
+      userId: parseInt(userId),
+      token,
+      expiresAt: { gt: new Date() },
+      used: false
+    }
+  })
 
-  if (!result.rows[0]) return res.status(400).json({error: 'Invalid/expired token'})
+  if (!resetToken) return res.status(400).json({ error: 'Invalid/expired token' })
   
   const hash = await bcrypt.hash(newPassword, 10)
-  await pool.query('UPDATE users SET password=$1 WHERE id=$2', [hash, userId])
-  await pool.query('UPDATE reset_tokens SET used=true WHERE id=$1', [result.rows[0].id])
+  await prisma.user.update({
+    where: { id: parseInt(userId) },
+    data: { password: hash }
+  })
+  await prisma.resetToken.update({
+    where: { id: resetToken.id },
+    data: { used: true }
+  })
 
-  const user = await pool.query('SELECT * FROM users WHERE id=$1', [userId])
-
-  // await sendOrderConfirmation(user.rows[0], orderId, {total, finalTotal, discountAmount}, cart)
-  
-  res.json({message: 'Password reset successful'})
+  res.json({ message: 'Password reset successful' })
 })
 
 
@@ -742,22 +746,20 @@ app.post('/orders', authenticateToken, async (req, res) => {
   }
 
   if (!couponId && couponCode) {
-    const cRes = await pool.query(
-      'SELECT id FROM coupons WHERE code=$1 AND is_active=true',
-      [couponCode.toUpperCase()]
-    )
-    if (cRes.rows.length) {
-      couponId = cRes.rows[0].id
+    const couponByCode = await prisma.coupon.findUnique({
+      where: { code: couponCode.toUpperCase() },
+      select: { id: true }
+    })
+    if (couponByCode) {
+      couponId = couponByCode.id
     }
   }
 
   try {
-    // Se carrinho vazio ou inválido
     if (!cart || !Array.isArray(cart) || cart.length === 0) {
       return res.status(400).json({ error: 'Empty cart' })
     }
 
-    // Calcular total corretamente
     const totalCents = cart.reduce((sum, item) => {
       const product = productsData.find(p => p.id === item.productId)
       if (!product) return sum
@@ -765,70 +767,78 @@ app.post('/orders', authenticateToken, async (req, res) => {
     }, 0)
     const total = parseFloat((totalCents / 100).toFixed(2))
 
-    // Processar cupom se fornecido
     let discountAmount = 0
     let finalTotal = total
     let appliedCouponId = null
 
     if (couponId) {
-      const couponResult = await pool.query(
-        `SELECT id, discount_type, discount_value, min_order_amount, max_uses, current_uses
-         FROM coupons 
-         WHERE id=$1 AND is_active=true 
-         AND (valid_from IS NULL OR valid_from <= CURRENT_TIMESTAMP) 
-         AND (valid_until IS NULL OR valid_until >= CURRENT_TIMESTAMP)`,
-        [couponId]
-      )
+      const coupon = await prisma.coupon.findUnique({
+        where: { id: couponId }
+      })
 
-      if (couponResult.rows.length) {
-        const coupon = couponResult.rows[0]
+      if (coupon && coupon.isActive) {
+        const now = new Date()
+        const validFromOk = !coupon.validFrom || coupon.validFrom <= now
+        const validUntilOk = !coupon.validUntil || coupon.validUntil >= now
 
-        if (!coupon.max_uses || coupon.current_uses < coupon.max_uses) {
-          if (total >= coupon.min_order_amount) {
-            if (coupon.discount_type === 'percentage') {
-              discountAmount = parseFloat(((total * coupon.discount_value) / 100).toFixed(2))
+        if (validFromOk && validUntilOk && (!coupon.maxUses || coupon.currentUses < coupon.maxUses)) {
+          if (total >= Number(coupon.minOrderAmount)) {
+            if (coupon.discountType === 'percentage') {
+              discountAmount = parseFloat(((total * Number(coupon.discountValue)) / 100).toFixed(2))
             } else {
-              discountAmount = parseFloat(coupon.discount_value.toFixed(2))
+              discountAmount = parseFloat(Number(coupon.discountValue).toFixed(2))
             }
             finalTotal = Math.max(0, parseFloat((total - discountAmount).toFixed(2)))
             appliedCouponId = coupon.id
-
-            // Incrementar uso do cupom
-            await pool.query(
-              'UPDATE coupons SET current_uses = current_uses + 1 WHERE id=$1',
-              [coupon.id]
-            )
           }
         }
       }
     }
 
-    // Inserir pedido com desconto e final_total
-    const order = await pool.query(
-      `INSERT INTO orders (user_id, total, discount_amount, final_total, coupon_id, status) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
-       RETURNING id`,
-      [userId, total, discountAmount, finalTotal, appliedCouponId, 'confirmed']
-    )
-
-    const orderId = order.rows[0].id
-
-    // Inserir itens do pedido
-    for (const item of cart) {
+    const orderItems = cart.map(item => {
       const product = productsData.find(p => p.id === item.productId)
-      
-      if (!product) continue
-      
-      const productPrice = (product.priceCents / 100).toFixed(2)
+      if (!product) return null
 
-      await pool.query(
-        `INSERT INTO order_items (order_id, product_id, name, price, quantity)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [orderId, item.productId, product.name, parseFloat(productPrice), item.quantity]
+      const productPrice = parseFloat((product.priceCents / 100).toFixed(2))
+      return {
+        productId: item.productId,
+        name: product.name,
+        price: productPrice,
+        quantity: item.quantity
+      }
+    }).filter(Boolean)
+
+    const transactionSteps = []
+    if (appliedCouponId) {
+      transactionSteps.push(
+        prisma.coupon.update({
+          where: { id: appliedCouponId },
+          data: { currentUses: { increment: 1 } }
+        })
       )
     }
 
-    res.status(201).json({ orderId, total, discountAmount, finalTotal })
+    transactionSteps.push(
+      prisma.order.create({
+        data: {
+          userId,
+          total,
+          discountAmount,
+          finalTotal,
+          couponId: appliedCouponId,
+          status: 'confirmed',
+          orderItems: {
+            create: orderItems
+          }
+        },
+        select: { id: true }
+      })
+    )
+
+    const transactionResult = await prisma.$transaction(transactionSteps)
+    const orderRecord = transactionResult[transactionResult.length - 1]
+
+    res.status(201).json({ orderId: orderRecord.id, total, discountAmount, finalTotal })
   } catch (err) {
     console.error('Error creating order:', err)
     res.status(500).json({ error: 'Error creating order', details: err.message })
@@ -871,12 +881,12 @@ app.get('/orders/:userId', authenticateToken, async (req, res) => {
   }
 
   try {
-    const orders = await pool.query(
-      'SELECT * FROM orders WHERE user_id=$1 ORDER BY created_at DESC',
-      [userId]
-    )
+    const orders = await prisma.order.findMany({
+      where: { userId: parseInt(userId) },
+      orderBy: { createdAt: 'desc' }
+    })
 
-    const ordersWithDisplayId = orders.rows.map(order => ({
+    const ordersWithDisplayId = orders.map(order => ({
       ...order,
       displayId: generateOrderDisplayId(order.id)
     }))
@@ -888,7 +898,6 @@ app.get('/orders/:userId', authenticateToken, async (req, res) => {
   }
 })
 
-// Atualizar status do pedido
 app.put('/orders/:orderId/status', async (req, res) => {
   const { orderId } = req.params
   const { status } = req.body
@@ -900,18 +909,18 @@ app.put('/orders/:orderId/status', async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
-      'UPDATE orders SET status=$1 WHERE id=$2 RETURNING id, status',
-      [status, orderId]
-    )
+    const updatedOrder = await prisma.order.update({
+      where: { id: parseInt(orderId) },
+      data: { status },
+      select: { id: true, status: true }
+    })
 
-    if (!result.rows.length) {
-      return res.status(404).json({ error: 'Order not found' })
-    }
-
-    res.json({ message: 'Order status updated', order: result.rows[0] })
+    res.json({ message: 'Order status updated', order: updatedOrder })
   } catch (err) {
     console.error('Error updating order:', err)
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+      return res.status(404).json({ error: 'Order not found' })
+    }
     res.status(500).json({ error: 'Error updating order' })
   }
 })
@@ -947,18 +956,18 @@ app.put('/orders/:orderId/status', async (req, res) => {
 app.post('/wishlist', authenticateToken, async (req, res) => {
   const { userId, productId } = req.body
 
-  // Verify user can only modify their own wishlist
   if (req.user.userId !== userId) {
     return res.status(403).json({ error: 'Unauthorized' })
   }
 
   try {
-    await pool.query(
-      'INSERT INTO wishlist (user_id, product_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
-      [userId, productId]
-    )
+    await prisma.wishlist.createMany({
+      data: [{ userId, productId }],
+      skipDuplicates: true
+    })
     res.status(201).json({ message: 'Added to wishlist' })
   } catch (err) {
+    console.error('Wishlist create error:', err)
     res.status(500).json({ error: 'Error adding to wishlist' })
   }
 })
@@ -994,12 +1003,14 @@ app.get('/wishlist/:userId', authenticateToken, async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
-      'SELECT product_id, created_at FROM wishlist WHERE user_id=$1 ORDER BY created_at DESC',
-      [userId]
-    )
-    res.json(result.rows)
+    const wishlist = await prisma.wishlist.findMany({
+      where: { userId: parseInt(userId) },
+      select: { productId: true, createdAt: true },
+      orderBy: { createdAt: 'desc' }
+    })
+    res.json(wishlist)
   } catch (err) {
+    console.error('Wishlist fetch error:', err)
     res.status(500).json({ error: 'Error fetching wishlist' })
   }
 })
@@ -1040,12 +1051,12 @@ app.delete('/wishlist/:userId/:productId', authenticateToken, async (req, res) =
   }
 
   try {
-    await pool.query(
-      'DELETE FROM wishlist WHERE user_id=$1 AND product_id=$2',
-      [userId, productId]
-    )
+    await prisma.wishlist.deleteMany({
+      where: { userId: parseInt(userId), productId }
+    })
     res.json({ message: 'Removed from wishlist' })
   } catch (err) {
+    console.error('Wishlist delete error:', err)
     res.status(500).json({ error: 'Error removing from wishlist' })
   }
 })
@@ -1059,16 +1070,30 @@ app.post('/reviews', async (req, res) => {
       return res.status(400).json({ error: 'Invalid rating' })
     }
 
-    const result = await pool.query(
-      `INSERT INTO reviews (user_id, product_id, rating, title, comment)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (user_id, product_id) DO UPDATE
-       SET rating=$3, title=$4, comment=$5, updated_at=CURRENT_TIMESTAMP
-       RETURNING id`,
-      [userId, productId, rating, title, comment]
-    )
+    const review = await prisma.review.upsert({
+      where: {
+        userId_productId: {
+          userId: parseInt(userId),
+          productId
+        }
+      },
+      update: {
+        rating,
+        title,
+        comment,
+        updatedAt: new Date()
+      },
+      create: {
+        userId: parseInt(userId),
+        productId,
+        rating,
+        title,
+        comment
+      },
+      select: { id: true }
+    })
 
-    res.status(201).json({ reviewId: result.rows[0].id })
+    res.status(201).json({ reviewId: review.id })
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: 'Error creating review' })
@@ -1079,16 +1104,14 @@ app.get('/reviews/:productId', async (req, res) => {
   const { productId } = req.params
 
   try {
-    const result = await pool.query(
-      `SELECT id, user_id, rating, title, comment, helpful_count, created_at
-       FROM reviews WHERE product_id=$1 AND (
-         SELECT COUNT(*) FROM reviews WHERE product_id=$1
-       ) > 0
-       ORDER BY helpful_count DESC, created_at DESC`,
-      [productId]
-    )
-    res.json(result.rows)
+    const reviews = await prisma.review.findMany({
+      where: { productId },
+      select: { id: true, userId: true, rating: true, title: true, comment: true, helpfulCount: true, createdAt: true },
+      orderBy: [{ helpfulCount: 'desc' }, { createdAt: 'desc' }]
+    })
+    res.json(reviews)
   } catch (err) {
+    console.error('Reviews fetch error:', err)
     res.status(500).json({ error: 'Error fetching reviews' })
   }
 })
@@ -1097,12 +1120,13 @@ app.put('/reviews/:reviewId/helpful', async (req, res) => {
   const { reviewId } = req.params
 
   try {
-    await pool.query(
-      'UPDATE reviews SET helpful_count = helpful_count + 1 WHERE id=$1',
-      [reviewId]
-    )
+    await prisma.review.update({
+      where: { id: parseInt(reviewId) },
+      data: { helpfulCount: { increment: 1 } }
+    })
     res.json({ message: 'Review marked as helpful' })
   } catch (err) {
+    console.error('Review helpful update error:', err)
     res.status(500).json({ error: 'Error updating review' })
   }
 })
@@ -1139,47 +1163,47 @@ app.post('/validate-coupon', async (req, res) => {
   console.log('validate-coupon request, code=', code, 'orderTotal=', orderTotal)
 
   try {
-    const result = await pool.query(
-      `SELECT id, discount_type, discount_value, min_order_amount, max_uses, current_uses
-       FROM coupons 
-       WHERE code=$1 AND is_active=true 
-       AND (valid_from IS NULL OR valid_from <= CURRENT_TIMESTAMP) 
-       AND (valid_until IS NULL OR valid_until >= CURRENT_TIMESTAMP)`,
-      [code.toUpperCase()]
-    )
-    console.log('coupon query returned', result.rows.length, 'rows')
+    const coupon = await prisma.coupon.findUnique({
+      where: { code: code.toUpperCase() }
+    })
 
-    if (!result.rows.length) {
+    if (!coupon || !coupon.isActive) {
       return res.status(404).json({ error: 'Invalid or expired coupon' })
     }
 
-    const coupon = result.rows[0]
+    const now = new Date()
+    const validFromOk = !coupon.validFrom || coupon.validFrom <= now
+    const validUntilOk = !coupon.validUntil || coupon.validUntil >= now
 
-    if (coupon.max_uses && coupon.current_uses >= coupon.max_uses) {
+    if (!validFromOk || !validUntilOk) {
+      return res.status(404).json({ error: 'Invalid or expired coupon' })
+    }
+
+    if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) {
       return res.status(400).json({ error: 'Coupon usage limit reached' })
     }
 
-    if (orderTotal < coupon.min_order_amount) {
+    if (orderTotal < Number(coupon.minOrderAmount)) {
       return res.status(400).json({ 
-        error: `Minimum order amount is R$ ${coupon.min_order_amount}` 
+        error: `Minimum order amount is R$ ${coupon.minOrderAmount}` 
       })
     }
 
     let discountAmount = 0
-    if (coupon.discount_type === 'percentage') {
-      discountAmount = (orderTotal * coupon.discount_value) / 100
+    if (coupon.discountType === 'percentage') {
+      discountAmount = (orderTotal * Number(coupon.discountValue)) / 100
     } else {
-      discountAmount = coupon.discount_value
+      discountAmount = Number(coupon.discountValue)
     }
 
     res.json({ 
       couponId: coupon.id, 
       discountAmount, 
-      discountType: coupon.discount_type,
-      discountValue: coupon.discount_value 
+      discountType: coupon.discountType,
+      discountValue: Number(coupon.discountValue) 
     })
   } catch (err) {
-    console.error(err)
+    console.error('Coupon validation error:', err)
     res.status(500).json({ error: 'Error validating coupon' })
   }
 })
@@ -1198,16 +1222,21 @@ app.post('/validate-coupon', async (req, res) => {
  */
 app.get('/coupons', async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT id, code, description, discount_type, discount_value, min_order_amount, valid_until
-       FROM coupons 
-       WHERE is_active=true 
-       AND (valid_from IS NULL OR valid_from <= CURRENT_TIMESTAMP) 
-       AND (valid_until IS NULL OR valid_until >= CURRENT_TIMESTAMP)
-       ORDER BY discount_value DESC`
-    )
-    res.json(result.rows)
+    const now = new Date()
+    const coupons = await prisma.coupon.findMany({
+      where: {
+        isActive: true,
+        AND: [
+          { OR: [{ validFrom: null }, { validFrom: { lte: now } }] },
+          { OR: [{ validUntil: null }, { validUntil: { gte: now } }] }
+        ]
+      },
+      select: { id: true, code: true, description: true, discountType: true, discountValue: true, minOrderAmount: true, validUntil: true },
+      orderBy: { discountValue: 'desc' }
+    })
+    res.json(coupons)
   } catch (err) {
+    console.error('Coupons fetch error:', err)
     res.status(500).json({ error: 'Error fetching coupons' })
   }
 })
